@@ -1,1 +1,420 @@
 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Quản Lý Bài Tập Học Viên</title>
+    <style>
+        /* CSS tương tự như đã cung cấp, giữ nguyên để đảm bảo giao diện đẹp */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .lesson-selector, .history-section, .quiz-container, .results {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .history-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .history-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .history-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .score-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .score-badge.excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .score-badge.good {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .score-badge.needs-improvement {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .no-history {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-size: 16px;
+        }
+        
+        .quiz-container {
+            display: none;
+        }
+        
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .quiz-header h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .question-image {
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            color: #333;
+            margin: 15px 0;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        
+        .question-type-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .options {
+            margin: 20px 0;
+        }
+        
+        .option {
+            background: white;
+            padding: 12px 16px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .fill-blank-input, .open-ended-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        .fill-blank-input:focus, .open-ended-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .answer-reveal {
+            background: #e7f3ff;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .answer-reveal h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .answer-reveal p {
+            color: #333;
+            margin: 0;
+            font-size: 15px;
+        }
+        
+        .submit-section {
+            position: sticky;
+            bottom: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .results {
+            text-align: center;
+            display: none;
+        }
+        
+        .results h2 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        
+        .score {
+            font-size: 48px;
+            font-weight: 700;
+            color: #28a745;
+            margin: 30px 0;
+        }
+        
+        .result-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .result-item {
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+        }
+        
+        .result-item.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .result-item.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .result-item.open {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Dashboard Quản Lý Bài Tập</h1>
+            <!-- Mã học viên được truyền qua URL: ?mahocvien=HV001 -->
+            <p id="studentInfo">Vui lòng nhập Mã học viên vào URL (?mahocvien=...) để xem lịch sử.</p>
+        </div>
+        
+        <div class="lesson-selector" id="lessonSelector">
+            <div class="form-group">
+                <label for="sessionSelect">Chọn Buổi:</label>
+                <select id="sessionSelect" onchange="checkSessionHistory()">
+                    <option value="">-- Chọn buổi học --</option>
+                </select>
+            </div>
+            
+            <button class="btn" id="startBtn" onclick="startQuiz()" disabled>Bắt Đầu Làm Bài</button>
+            
+            <div id="loadingMessage"></div>
+        </div>
+        
+        <!-- DASHBOARD FEATURE: Lịch sử làm bài theo buổi -->
+        <div class="history-section" id="historySection">
+            <h3>📊 Lịch Sử Làm Bài (Dashboard)</h3>
+            <div id="historyContent">
+                <!-- Nội dung lịch sử sẽ được load bằng JS -->
+            </div>
+        </div>
+        
+        <div class="quiz-container" id="quizContainer">
+            <div class="quiz-header">
+                <h2 id="quizTitle"></h2>
+                <p>Hoàn thành tất cả câu hỏi bên dưới và bấm "Nộp Bài"</p>
+            </div>
+            
+            <div id="questionsContainer"></div>
+            
+            <div class="submit-section">
+                <button class="btn" onclick="submitAllAnswers()">Nộp Bài</button>
+            </div>
+        </div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Hoàn Thành Bài Tập!</h2>
+            <div class="score" id="finalScore"></div>
+            <p id="resultMessage"></p>
+            <div class="result-details" id="resultDetails"></div>
+            <button class="btn" onclick="backToMenu()">Chọn Buổi Khác</button>
+        </div>
+    </div>
+
+    <script>
+eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('gl(gg(p,a,c,k,e,d){e=gg(c){gf(c<a?\'\':e(go(c/a)))+((c=c%a)>35?gj.gq(c+29):c.gp(36))};if(!\'\'.gi(/^/,gj)){gh(c--){d[e(c)]=k[c]||e(c)}k=[gg(e){gf d[e]}];e=gg(){gf\'\\\\w+\'};c=1};gh(c--){if(k[c]){p=p.gi(gn gm(\'\\\\b\'+e(c)+\'\\\\b\',\'g\'),k[c])}}gf p}(\'ge(8s(p,a,c,k,e,d){e=8s(c){8t(c<a?\\\'\\\':e(8A(c/a)))+((c=c%a)>35?8u.8y(c+29):c.8z(36))};8w(!\\\'\\\'.8v(/^/,8u)){8C(c--){d[e(c)]=k[c]||e(c)}k=[8s(e){8t d[e]}];e=8s(){8t\\\'\\\\\\\\w+\\\'};c=1};8C(c--){8w(k[c]){p=p.8v(8B gd(\\\'\\\\\\\\b\\\'+e(c)+\\\'\\\\\\\\b\\\',\\\'g\\\'),k[c])}}8t p}(\\\'j 8r=\\\\\\\'8q-8p\\\\\\\';j 4v=\\\\\\\'8o\\\\\\\';j 4u=\\\\\\\'3D\\\\\\\';j 3w={"A":"8n","8m":"53-3z-3y-3x","8l":"8k","4Q":"-----4P 2Y 2X-----\\\\\\\\8j\\\\\\\\8i\\\\\\\\8h\\\\\\\\8g\\\\\\\\8f/+8e/8d+8c\\\\\\\\8b//8a+89\\\\\\\\88+9+87/86\\\\\\\\85+84\\\\\\\\83/82+f/81\\\\\\\\7Z+7Y+7X\\\\\\\\7W/7V\\\\\\\\7U\\\\\\\\n+7T+7S+7R+\\\\\\\\7Q+7P+7O/7N\\\\\\\\n/7M/7L\\\\\\\\7K/7J+7I\\\\\\\\7H/7G/7F/7E\\\\\\\\7D+m\\\\\\\\7C+7B/7A\\\\\\\\7z+7y\\\\\\\\7x/7w/7v\\\\\\\\7u\\\\\\\\7t\\\\\\\\7s\\\\\\\\7r\\\\\\\\7q+7p+7o==\\\\\\\\n-----4O 2Y 2X-----\\\\\\\\n","4U":"51-50-4Z@53-3z-3y-3x.4Y.4X.1t","7n":"7m","7l":"1f://7k.7j.1t/o/2s/4T","7i":"1f://2s.1P.1t/2U","7h":"1f://2V.1P.1t/2s/52/7g","7f":"1f://2V.1P.1t/7e/52/7d/7c/51-50-4Z%7b-3z-3y-3x.4Y.4X.1t","7a":"1P.1t"};J 2L=[];J 1M=[];J 28=79;J 2Q={};J 1d=\\\\\\\'\\\\\\\';J 1V=\\\\\\\'\\\\\\\';J 2P=[];J 2G=22;3i.78(\\\\\\\'77\\\\\\\',V(){j 4W=W 76(3i.75.74);1d=4W.73(\\\\\\\'4V\\\\\\\')||\\\\\\\'\\\\\\\';w(1d){D.E(\\\\\\\'72\\\\\\\').1x=`Mãhọc 2aên:${1d}`;4z()}O{D.E(\\\\\\\'3q\\\\\\\').1a=`<F P="Z">4k lòK 71 cấp Mãhọc 2aên 70 6Z(?4V=...)</F>`}});2b V 4y(){2z{j 4S=3u(35.34({"6Y":"6X","6W":"6V"}));j 1B=3S.6U(1C.1B()/3V);j 4R=3u(35.34({"6T":3w.4U,"6S":"1f://2V.1P.1t/4T/6R","6Q":"1f://2s.1P.1t/2U","6P":1B+6O,"6N":1B}));j 3t=4S+"."+4R;j 4N=3w.4Q.1G("-----4P 2Y 2X-----","").1G("-----4O 2Y 2X-----","").1G(/\\\\\\\\s/g,"");j 2W=6M(4N);j 3v=W 4F(2W.X);2I(J i=0;i<2W.X;i++){3v[i]=2W.6L(i)}j 4G=14 4M.4L.6K("6J",3v,{6I:"4J-4I-4H",6H:"6G-6F"},22,["4K"]);j 4E=14 4M.4L.4K("4J-4I-4H",4G,W 6E().6D(3t));j 4D=3u(6C.6B(...W 4F(4E))).1G(/\\\\\\\\+/g,\\\\\\\'-\\\\\\\').1G(/\\\\\\\\//g,\\\\\\\'6A\\\\\\\').1G(/=+$/,\\\\\\\'\\\\\\\');j 3s=3t+"."+4D;j 4C=14 2y("1f://2s.1P.1t/2U",{3K:"3J",2x:{"3I-3H":"3G/x-2V-6z-6y"},3F:`6x=6w:6v:6u:6t:6s-A:3s-6r&6q=${3s}`});j 2r=14 4C.2w();w(2r.Z){2T W 2S(2r.6p||2r.Z)}U 2r.6o}2v(Z){27.Z("Lỗi xác Sực 4B 4A:",Z);2T W 2S("2lôK Sể lấy 2U. 6nểm 6m cấu hì31 4B 4A.")}}2b V 4z(){2z{j 3r=D.E(\\\\\\\'3q\\\\\\\');3r.1a=\\\\\\\'<F P="6l">Đ6k tải dữ 4xệu và lị1O sử...</F>\\\\\\\';28=14 4y();14 4w();14 2Z();4t();3r.1a=\\\\\\\'\\\\\\\'}2v(Z){D.E(\\\\\\\'3q\\\\\\\').1a=`<F P="Z">Lỗi tải dữ4xệu:${Z.20}</F>`}}2b V 4w(){j 1T=`1f:j 1u=14 2y(1T,{2x:{\\\\\\\'37\\\\\\\':`36 ${28}`}});w(!1u.32){2T W 2S(`2lôK Sểtải câu hỏi từ30 ${4v}`)}j 2R=14 1u.2w();j 1s=2R.33;w(!1s||1s.X<2){2T W 2S(\\\\\\\'6j câu hỏi 1HốK.\\\\\\\')}2L=[];2Q={};2I(J i=1;i<1s.X;i++){j G=1s[i];w(G[2]&&G[0]){j 1r=G[0];j z={1r:1r,6i:G[1]||\\\\\\\'\\\\\\\',1S:G[2],A:G[3]||\\\\\\\'1Z 1Y\\\\\\\',1o:G[4]||\\\\\\\'\\\\\\\',1n:G[5]||\\\\\\\'\\\\\\\',1m:G[6]||\\\\\\\'\\\\\\\',1l:G[7]||\\\\\\\'\\\\\\\',1k:G[8]||\\\\\\\'\\\\\\\',17:G[9]||\\\\\\\'\\\\\\\',2n:G[10]||\\\\\\\'\\\\\\\',3o:G[11]||\\\\\\\'\\\\\\\',2B:(G[12]||\\\\\\\'\\\\\\\').3l()===\\\\\\\'6h\\\\\\\',1L:G[13]||\\\\\\\'\\\\\\\'};2L.3k(z);2Q[1r]=26}}}2b V 2Z(){w(!1d)U;j 1T=`1f:j 1u=14 2y(1T,{2x:{\\\\\\\'37\\\\\\\':`36 ${28}`}});w(!1u.32){27.6g(`2lôK Sểtải lị1O sửtừ30 ${4u}`);U}j 2R=14 1u.2w();j 1s=2R.33;w(!1s||1s.X<2)U;2P=[];2I(J i=1;i<1s.X;i++){j G=1s[i];w(G[0]===1d){2P.3k({1r:G[1],16:1w(G[2])||0,4m:1w(G[3])||0,15:1w(G[4])||0,1U:G[5],6f:G[6]||\\\\\\\'\\\\\\\'})}}}V 4t(){j 1z=D.E(\\\\\\\'1z\\\\\\\');1z.1a=\\\\\\\'<18 1y="">-- 6eọn 2Kổi học --</18>\\\\\\\';j 4q=6d.6c(2Q).4p((a,b)=>{j 4s=1w(a)||0;j 4r=1w(b)||0;U 4s-4r});4q.1E(1r=>{j 18=D.4h(\\\\\\\'18\\\\\\\');18.1y=1r;18.1x=`4iổi ${1r}`;1z.4a(18)})}V 6b(){j 1z=D.E(\\\\\\\'1z\\\\\\\');j 2q=1z.1y;1V=2q;j 1J=D.E(\\\\\\\'1J\\\\\\\');j 1R=D.E(\\\\\\\'1R\\\\\\\');j 2N=D.E(\\\\\\\'2N\\\\\\\');1J.3A=!2q;w(!2q||!1d){1R.R.1c=\\\\\\\'1Q\\\\\\\';U}j 2o=2P.Y(h=>h.1r==2q).4p((a,b)=>W 1C(b.1U)-W 1C(a.1U));1R.R.1c=\\\\\\\'2t\\\\\\\';w(2o.X===0){2N.1a=\\\\\\\'<F P="6a-4o">Bạn 1Oưa làm bài tập 2Kổi này</F>\\\\\\\';1J.1x=\\\\\\\'Bắt Đầu Làm Bài\\\\\\\'}O{J 2M=`<3p P="4o-3p"><4n><1H><S>Lần</S><S>Điểm</S><S>69ần 1Hăm</S><S>68ời 67</S></1H></4n><4l>`;2o.1E((2p,Q)=>{j 15=2p.15;J 2O=\\\\\\\'66-65\\\\\\\';w(15>=80)2O=\\\\\\\'64\\\\\\\';O w(15>=60)2O=\\\\\\\'63\\\\\\\';2M+=`<1H><1I>Lần ${2o.X-Q}</1I><1I>${2p.16}/${2p.4m}</1I><1I><2J P="16-4g ${2O}">${15}%</2J></1I><1I>${2p.1U}</1I></1H>`});2M+=`</4l></3p><p R="3g-3h: 3R; 2c: #62; 61-5Z: 5Y;">💡Bạnđãlàm bài này ${2o.X}lần.Hãy làm lạiđểđạtđiểm 5X hơn!</p>`;2N.1a=2M;1J.1x=\\\\\\\'Làm Lại Bài Tập\\\\\\\'}}V 5W(){w(!1V){4j(\\\\\\\'4k lòK 1Oọn 2Kổi học\\\\\\\');U}1M=2L.Y(q=>q.1r==1V);w(1M.X===0){4j(\\\\\\\'2lôK tìm Sấy câu hỏi 5V 2Kổi này\\\\\\\');U}D.E(\\\\\\\'3B\\\\\\\').R.1c=\\\\\\\'1Q\\\\\\\';D.E(\\\\\\\'1R\\\\\\\').R.1c=\\\\\\\'1Q\\\\\\\';D.E(\\\\\\\'3T\\\\\\\').R.1c=\\\\\\\'2t\\\\\\\';D.E(\\\\\\\'5U\\\\\\\').1x=`Bài Tập 4iổi ${1V}`;2G=22;3j()}V 3j(){j 3n=D.E(\\\\\\\'5T\\\\\\\');3n.1a=\\\\\\\'\\\\\\\';1M.1E((q,Q)=>{j 1b=D.4h(\\\\\\\'F\\\\\\\');1b.2E=\\\\\\\'z-1b\\\\\\\';1b.24=`z-${Q}`;J I=`<F P="z-5S">Câu ${Q+1}</F><2J P="z-A-4g">${49(q.A)}</2J>`;w(q.2n){I+=`<5R 5Q="${q.2n}"P="z-2n"5P="5O 2n">`}I+=`<F P="z-1S">${q.1S}</F>`;I+=`<F P="N">`;w(q.A===\\\\\\\'1Z 1Y\\\\\\\'){j N=[q.1o,q.1n,q.1m,q.1l,q.1k].Y(o=>o);N.1E((1q,25)=>{I+=`<F P="18"5N="47(${Q}, ${25})">${1q}</F>`})}O w(q.A===\\\\\\\'2j\\\\\\\'){j N=[q.1o,q.1n,q.1m,q.1l,q.1k].Y(o=>o);N.1E((1q,25)=>{I+=`<F P="18"><1N A="40"24="q${Q}4f${25}"1y="${25 + 1}"><4e 2I="q${Q}4f${25}">${1q}</4e></F>`})}O w(q.A===\\\\\\\'2h-2g-2f-2e\\\\\\\'){I+=`<1N A="1S"P="5M-5L-1N"24="3Y-${Q}"4d="4cập câu 1Hả lời của bạn...">`}O w(q.A===\\\\\\\'1h-1g\\\\\\\'){I+=`<2F P="3P-5K-1N"24="3W-${Q}"4d="4cập câu 1Hả lời của bạn..."></2F>`}I+=`</F>`;w(2G){j 2d=3e(q);w(2d){I+=`<F P="2H-4b"24="2H-${Q}">`;w(q.A!==\\\\\\\'1h-1g\\\\\\\'&&q.17){I+=`<23>✅ĐápánđúK:</23>`;w(q.A===\\\\\\\'1Z 1Y\\\\\\\'){j 2k=1w(q.17)-1;j N=[q.1o,q.1n,q.1m,q.1l,q.1k].Y(o=>o);I+=`<p>${N[2k]}</p>`}O w(q.A===\\\\\\\'2j\\\\\\\'){j 2C=q.17.3d(\\\\\\\',\\\\\\\').1A(a=>1w(a.2D())-1);j N=[q.1o,q.1n,q.1m,q.1l,q.1k].Y(o=>o);j 2i=2C.1A(i=>N[i]).Y(o=>o);I+=`<p>${2i.1W(\\\\\\\', \\\\\\\')}</p>`}O w(q.A===\\\\\\\'2h-2g-2f-2e\\\\\\\'){j 1j=[q.1o,q.1n,q.1m,q.1l,q.1k].Y(o=>o);I+=`<p>${1j.1W(\\\\\\\' 3Oặc \\\\\\\')}</p>`}}w(q.3o){I+=`<23 R="3g-3h: 5J;">💡5Iải Sí1O:</23>`;I+=`<p>${q.3o}</p>`}I+=`</F>`}O w(q.2B&&q.1L){j 1X=W 1C(q.1L);I+=`<F P="2H-4b"24="2H-${Q}"R="5H: #5G; 5F-5E-2c: #5D;">`;I+=`<23 R="2c: #3c;">🔒Đápán sẽđược côK bố</23>`;I+=`<p R="2c: #3c;">Đápán sẽ5Cển Sịvào:${1X.3a(\\\\\\\'2a-39\\\\\\\')}</p>`;I+=`</F>`}}1b.1a=I;3n.4a(1b)})}V 3e(z){w(!z.2B)U 22;w(z.1L){2z{j 1X=W 1C(z.1L);j 1B=W 1C();U 1B>=1X}2v(e){U 22}}U 26}V 49(A){j 48={\\\\\\\'1Z 1Y\\\\\\\':\\\\\\\'5Bắc 5Aệm\\\\\\\',\\\\\\\'2j\\\\\\\':\\\\\\\'5zều đáp án\\\\\\\',\\\\\\\'2h-2g-2f-2e\\\\\\\':\\\\\\\'Điền từ\\\\\\\',\\\\\\\'1h-1g\\\\\\\':\\\\\\\'Tự 38ận\\\\\\\'};U 48[A]||A}V 47(46,45){j 1b=D.E(`z-${46}`);j N=1b.3m(\\\\\\\'.18\\\\\\\');N.1E(1q=>1q.44.5y(\\\\\\\'21\\\\\\\'));N[45].44.5x(\\\\\\\'21\\\\\\\')}V 5w(){w(!5v(\\\\\\\'Bạn có 1Oắc 1Oắn 5uốn nộp bài?\\\\\\\')){U}2G=26;j 1e=[];J 16=0;J 1v=1M.Y(q=>q.A!==\\\\\\\'1h-1g\\\\\\\').X;1M.1E((q,Q)=>{J 1F=\\\\\\\'\\\\\\\';J 19=22;w(q.A===\\\\\\\'1Z 1Y\\\\\\\'){j 1b=D.E(`z-${Q}`);j 21=1b.5t(\\\\\\\'.18.21\\\\\\\');w(21){j N=1b.3m(\\\\\\\'.18\\\\\\\');j 43=42.41(N).5s(21)+1;1F=43.5r();19=1F===q.17}}O w(q.A===\\\\\\\'2j\\\\\\\'){j 2m=42.41(D.3m(`#z-${Q}1N[A="40"]:2m`)).1A(3Z=>3Z.1y);1F=2m.1W(\\\\\\\',\\\\\\\');j 1j=q.17.3d(\\\\\\\',\\\\\\\').1A(a=>a.2D());19=2m.X===1j.X&&2m.5q(a=>1j.5p(a))}O w(q.A===\\\\\\\'2h-2g-2f-2e\\\\\\\'){j 1N=D.E(`3Y-${Q}`);1F=1N.1y.2D();j 3X=1F.3l().1G(/\\\\\\\\s+/g,\\\\\\\' \\\\\\\');j 1j=[q.1o,q.1n,q.1m,q.1l,q.1k].Y(1q=>1q).1A(1q=>1q.3l().1G(/\\\\\\\\s+/g,\\\\\\\' \\\\\\\'));19=1j.5o(3f=>3X===3f)}O w(q.A===\\\\\\\'1h-1g\\\\\\\'){j 2F=D.E(`3W-${Q}`);1F=2F.1y;19=26}w(19&&q.A!==\\\\\\\'1h-1g\\\\\\\'){16++}1e.3k({29:Q+1,z:q.1S,1F,19,A:q.A,17:q.17})});3j();3i.5n({3h:0,5m:\\\\\\\'5l\\\\\\\'});5k(()=>{3U(16,1v,1e)},3V)}V 3U(16,1v,1e){D.E(\\\\\\\'3T\\\\\\\').R.1c=\\\\\\\'1Q\\\\\\\';D.E(\\\\\\\'1e\\\\\\\').R.1c=\\\\\\\'2t\\\\\\\';j 15=1v>0?3S.5j((16/1v)*5i):0;D.E(\\\\\\\'5h\\\\\\\').1x=`${16}/${1v}(${15}%)`;J 20=\\\\\\\'\\\\\\\';w(15>=80)20=\\\\\\\'5gất sắc! Bạn đã làm rất tốt!\\\\\\\';O w(15>=60)20=\\\\\\\'2lá tốt! 5fếp tục cố gắK 31é!\\\\\\\';O 20=\\\\\\\'Cần cố gắK Sêm! ĐừK bỏ 5eộc!\\\\\\\';D.E(\\\\\\\'5d\\\\\\\').1x=20;j 3b=D.E(\\\\\\\'5c\\\\\\\');3b.1a=\\\\\\\'<3Q R="3g-5b: 3R;">5a 59ết kết 2uả:</3Q>\\\\\\\';1e.1E(1p=>{J 2E=\\\\\\\'3P\\\\\\\';w(1p.A!==\\\\\\\'1h-1g\\\\\\\'){2E=1p.19?\\\\\\\'3f\\\\\\\':\\\\\\\'58\\\\\\\'}J 1K=`<F P="1p-57 ${2E}"><1i>Câu ${1p.29}:</1i>${1p.19?\\\\\\\'✓ ĐúK\\\\\\\':(1p.A===\\\\\\\'1h-1g\\\\\\\'?\\\\\\\'📝 Tự 38ận\\\\\\\':\\\\\\\'✗ 3M\\\\\\\')}`;j z=1M[1p.29-1];j 2d=3e(z);w(!1p.19&&1p.A!==\\\\\\\'1h-1g\\\\\\\'&&2d){w(z.A===\\\\\\\'1Z 1Y\\\\\\\'&&z.17){j 2k=1w(z.17)-1;j N=[z.1o,z.1n,z.1m,z.1l,z.1k].Y(o=>o);w(N[2k]){1K+=`<2A><1D><1i>✅ĐápánđúK:</1i> ${N[2k]}</1D>`}}O w(z.A===\\\\\\\'2j\\\\\\\'&&z.17){j 2C=z.17.3d(\\\\\\\',\\\\\\\').1A(a=>1w(a.2D())-1);j N=[z.1o,z.1n,z.1m,z.1l,z.1k].Y(o=>o);j 2i=2C.1A(i=>N[i]).Y(o=>o);w(2i.X>0){1K+=`<2A><1D><1i>✅ĐápánđúK:</1i> ${2i.1W(\\\\\\\', \\\\\\\')}</1D>`}}O w(z.A===\\\\\\\'2h-2g-2f-2e\\\\\\\'){j 1j=[z.1o,z.1n,z.1m,z.1l,z.1k].Y(o=>o);w(1j.X>0){1K+=`<2A><1D><1i>✅ĐápánđúK:</1i> ${1j.1W(\\\\\\\' 3Oặc \\\\\\\')}</1D>`}}}O w(!2d&&z.2B&&z.1L){j 1X=W 1C(z.1L);1K+=`<2A><1D R="2c: #3c;"><1i>🔒Đápán sẽđược côK bốvào:</1i> ${1X.3a(\\\\\\\'2a-39\\\\\\\')}</1D>`}1K+=`</F>`;3b.1a+=1K});3N(16,1v,15,1e)}2b V 3N(16,1v,15,1e){2z{w(!1d)U;j 1B=W 1C();j 1U=1B.3a(\\\\\\\'2a-39\\\\\\\');j 3L=1e.1A(r=>{w(r.A===\\\\\\\'1h-1g\\\\\\\'){U`Câu ${r.29}:Tự38ận`}U`Câu ${r.29}:${r.19?\\\\\\\'ĐúK\\\\\\\':\\\\\\\'3M\\\\\\\'}`}).1W(\\\\\\\'; \\\\\\\');j 3E=[1d,1V,16,1v,15,1U,3L];j 1T=`1f:j 1u=14 2y(1T,{3K:\\\\\\\'3J\\\\\\\',2x:{\\\\\\\'37\\\\\\\':`36 ${28}`,\\\\\\\'3I-3H\\\\\\\':\\\\\\\'3G/2w\\\\\\\'},3F:35.34({33:[3E]})});w(1u.32){27.56(\\\\\\\'Đã lưu kết 2uả Sà31 côK vào 30 3D\\\\\\\')}O{27.Z(\\\\\\\'Lỗi 3C lưu kết 2uả:\\\\\\\',14 1u.1S())}}2v(Z){27.Z(\\\\\\\'Lỗi 3C lưu kết 2uả:\\\\\\\',Z)}}V 55(){D.E(\\\\\\\'1e\\\\\\\').R.1c=\\\\\\\'1Q\\\\\\\';D.E(\\\\\\\'3B\\\\\\\').R.1c=\\\\\\\'2t\\\\\\\';D.E(\\\\\\\'1z\\\\\\\').1y=\\\\\\\'\\\\\\\';D.E(\\\\\\\'1J\\\\\\\').3A=26;D.E(\\\\\\\'1J\\\\\\\').1x=\\\\\\\'Bắt Đầu Làm Bài\\\\\\\';w(1d){2Z().54(()=>{D.E(\\\\\\\'1R\\\\\\\').R.1c=\\\\\\\'1Q\\\\\\\'})}}\\\',62,gc,\\\'|||||||||||||||||||gb|||||||||||||8w|||ga|g9|||g8|g7|g6|g5||g4|g3|g2|||g1|g0|fZ|fY|fX|fW||8t|8s|8B|fV|fU|fT|||||fS|fR|fQ|fP|fO|fN|fM|fL|fK|fJ|fI|fH|fG|fF|fE|fD|fC|fB|fA|fz|fy|fx|fw|fv|fu|ft|fs|fr|8A|fq|fp|fo|fn|fm|fl|fk|fj|fi|8v|fh|fg|ff|fe|fd|fc|fb|ch|fa|f9|f8|f7|f6|f5|f4|f3|f2|f1|f0|eZ|eY|eX|eW|eV|eU|eT|eS|eR|eQ|eP|eO|eN|eM|eL|eK|eJ|eI|eH|eG|eF|eE|eD|eC|eB|eA|ez|ey|ex|ew|ev|eu|et|es|er|eq|br|ep|eo|en|em|el|ek|ej|ei|eh|bu|eg|ef|ee|ed|ec|eb|ea|e9|e8|e7|e6|e5|e4|e3|e2|e1|e0|dZ|dY|dX|dW|dV|dU|dT|dS|dR|dQ|dP|8x|dO|dN|dM|dL|dK|dJ|dI|dH|dG|dF|dE|dD|dC|dB|dA|dz|dy|dx|dw|c5|dv|du|dt|ds|dr|dq|dp|do|dn|dm|dl|dk|dj|di|dh|dg|df|de|dd|dc|db|da|d9|d8|d7|d6|d5|cb|d4|d3|d2|d1|d0|cZ|cY|cX|cW|cV|cU|cT|cS|cR|cQ|cP|cO|cN|cM|cL|cK|cJ|cI|cH|cG|cF|cE|cD|cC|cB|cA|cz|cy|cx|cw|cv|ct|cs|cr|cq|cp|co|cn|cm|cl|ck|cj|ci|cg|cf|ce|cd|cc|ca|c9|c8|c7|c6|c4|c3|c2|c1|c0|bZ|bY|bX|bW|bV|bU|bT|bS|bR|bQ|bP|bO|bN|cu|bM|bL|bK|bJ|bI|bH|bG|bF|bE|bD|bC|bB|8z|bA|bz|by|bx|bw|bv|bt|bs|bq|bp|bo|bn|bm|bl|bk|bj|bi|bh|bg|bf|be|bd|bc|bb|ba|b9|b8|b7|b6|b5|b4|b3|b2|b1||b0|aZ|aY|aX|aW|aV|aU|aT|aS|aR|aQ|aP|aO|aN|aM|aL|aK|aJ|aI|aH|aG|aF|aE|aD|aC|aB|aA|az|ay|ax|aw|av|au|at|as|ar|8y|8u|aq|ap|ao|an|am|al|ak|aj|ai|ah|ag|af|ae|ad|ac|ab|aa|a9|a8|a7|a6|a5|a4|a3|a2|a1|a0|9Z|9Y|9X|9W|9V|9U|9T|9S|9R|9Q|9P|9O|9N|9M|9L|9K|9J|9I|9H|9G|9F|9E|9D|9C|9B|9A|9z|9y|9x|9w|9v|9u|9t|9s|9r|9q|9p|9o|9n|9m|9l|9k|9j|9i|9h|9g|9f|9e|9d|9c|9b|9a|99|98|97|96|95|94||93|92|91|90|8Z|8Y|8X|8W|8V|8U|8T|8S|8R|8Q|8P|8O|8N|8M|8L|8K|8J|8I|8H|8G|8F|8E|8D\\\'.8x(\\\'|\\\'),0,{}))\',62,nW,\'||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||gg|gf|gj|gi|if|gk|gq|gp|go|gn|gh|nV|nU|nT|nS|nR|nQ|nP|nO|nN|nM|nL|nK|nJ|nI|nG|nF|nE|nD|nC|nB|nA|nz|ny|nx|nw|nv|nu|nt|ns|nr|nq|np|nn|nm|nl|nk|nj|ni|nf|ne|nd|nc|nb|na|n9|n8|n7|n6|n5|n4|n3|n2|n1|n0|mZ|mY|mX|mW|mV|mU|mT|mS|nH|mR|mQ|mP|mO|mN|mM|mL|mK|mJ|mI|mH|mG|mF|mE|mD|mC|mB|mA|mz|my|mx|mw|mv|mt|ms|mr|mq|mp|mo|mn|mm|ml|mk|mj|mi|mh|mg|mf|me|md|mc|mb|ma|m9|m8|m7|m6|m5|m4|m3|m2|m1|m0|lZ|lY|lX|lW|lV|lU|lT|lS|lR|lQ|lP|lO|lN|lM|lL|lK|lJ|lI|lH|lG|lF|lE|no|lD|lC|lB|lA|lz|ly|lx|lw|lv|lt|ls|lr|lq|lp|lo|ln|lm|ll|lk|lj|lh|lg|lf|le|ld|lc|lb|la|l9|l8|l7|l6|hi|l5|l4||l3|l2||l1|l0|kZ|mu|kY|kX|kW|kV|kU|kT|kS|kR|kQ|kP|kO|kN|kM|kL|kK|kJ|kI|kH|kG|kF|kE|kD|kC|kB|kA|kz|ky|kx|kw|kv|ku|kt||ks|kr|kq|kp|ko||kn|km|kl|kk|kj||ki|kh|kg|kf|ke|kd|kc|kb|ka|k9|k8|k7||k6|k5|li|k4|k3|k2|k1|k0|jZ|jY|jX|jW|jV|jU|jT|jS|jR|jQ|jP|jO|jN|jM|jL|jK|jJ|jI|jH|jG|jF|jE|jD|jC|jB|jA|jz|jy|jx|jw|jv|ju|jt|js|jr|jq|h3|jp|ho|jo|jn|jm|jl|jk|jj|ji|jh|jg|jf|je|jd|jc|jb|ja|j9|j8|j7|j6|j5|j4|j3|j2|j1|j0|iZ|iY|iX|iW|iV|iU|iT|iS|iR|iQ|iP|iO|iN|iM|lu|iL|iK|iJ|iI|iH|iG|nh|iF|iE|iD|iC|iB|iA|iz|iy|ix|iw|iv|iu|it|is|ir|iq|ip|io|im|il|ik|ij|ii|ih|ig|ie|ic|ib|ia|i9|i8|i7|i6|i5|i4|i3|i2|i1|i0|hZ|hY|hX|hW|hV|in|hU|hT|hS|hR|hQ|hP|hO|hN|hM|hL|hK|id|h4|hJ|hI|hH|hG|hF|hE|hD|hC|hB|hA|hz|hy|hx|hw|hv|hu|ht|hs|hr|hq|hp|hn|hm|hl|hk|hj|hh|hg|hf|he|hd|hc|hb|ha|h9|h8|h7|h6|h5|h2|h1|h0|gZ|gY|gX|gW|gV|gU|gT|gS|gR|gQ|gP|gO|gN|gM|gL|gK|gJ|gI|gH|gG|gF|gE|gD|gC|gB|ng|gA|gz|gy|gx|gw|gv|gu|gt|gs|gr|gm|gl\'.gk(\'|\'),0,{}))',62,1485,'|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||return|function|while|replace|String|split|eval|RegExp|new|parseInt|toString|fromCharCode|524|const|question|type|document|getElementById|div|row|html|let|options|else|class|index|style|th|length|filter|error|await|percentage|score|correctAnswer|option|isCorrect|innerHTML|card|display|studentId|results|https|Ended|Open|strong|correctAnswers|option5|option4|option3|||option2|option1|result|opt|session|rows|com|response|totalQuestions|textContent|value|sessionSelect|map||now|Date|small|forEach|userAnswer||tr|td|startBtn|detailHTML|timeShowAnswer|filteredQuestions|input|googleapis|none|historySection|text|url|timestamp|selectedSession|join|showTime|Choice|Multiple|message|selected|false|optIdx|true|console|accessToken|questionIndex|vi|async|color|shouldShowAnswer|Blank|the|Fill|correctOptions|Checkbox|correctIndex|Kh|checked|image|sessionHistory|record|currentSession|tokenData|oauth2|block|qu|catch|json|headers|fetch||try||showAnswer|correctIndices|trim|className|textarea|quizSubmitted|answer||for|span|allQuestions|tableHTML|historyContent|badgeClass|studentHistory|sessionsData|data|Error|throw|token|www|binaryKey|KEY|PRIVATE|loadStudentHistory|sheet|ok|values|stringify|JSON|Bearer|Authorization|VN|toLocaleString|detailsDiv|856404|checkAnswerVisibility|correct|margin|top|window|displayAllQuestions|push|toLowerCase|querySelectorAll|container|explanation|table|loadingMessage|loadingMsg|jwt|signatureInput|btoa|keyData|SERVICE_ACCOUNT|474302|alcove|disabled|lessonSelector|khi|KetQua|rowData|body|application|Type|Content|POST|method|detailedResults|Sai|saveResultsToSheet|open|15px|Math|quizContainer|showResults|1000|openended|normalizedAnswer|fillblank|checkbox|from|Array|selectedIndex|classList|optIndex|qIndex|selectMultipleChoice|labels|getTypeLabel|appendChild|reveal|Nh|placeholder|label|_opt|badge|createElement|Bu|alert|Vui|tbody|total|thead|history|sort|sessions|numB|numA|populateSessions|RESULT_SHEET|SHEET_NAME|loadQuestions|getAccessToken|loadAllData|Account|Service|tokenResponse|signatureBase64|signature|Uint8Array|cryptoKey|v1_5|PKCS1|RSASSA|sign|subtle|crypto|pemContents|END|BEGIN|private_key|payload|header|auth|client_email|mahocvien|urlParams|gserviceaccount|iam|thansok9|video|baitap|v1|central|then|backToMenu|log|item|incorrect|ti|Chi|bottom|resultDetails|resultMessage|Ti|Xu|finalScore|100|round|setTimeout|smooth|behavior|scrollTo|some|includes|every|indexOf|querySelector|confirm|submitAllAnswers|add|remove|Nhi|nghi|Tr|ffc107|left|border|fff3cd|background|Gi|12px|ended|blank|fill|onclick|Question||alt|src|img|number|questionsContainer|quizTitle|cho|startQuiz|cao|14px|size||font|6c757d|good|excellent|improvement|needs|gian|Th|Ph|checkSessionHistory|keys|Object|Ch|details|warn|yes|lesson|Sheet|ang|loading|tra|Ki|access_token|error_description|assertion|bearer|grant|oauth|params|ietf|urn|grant_type|urlencoded|form|_|encode|TextEncoder|256|SHA|hash|name|pkcs8|importKey|charCodeAt|atob|iat|3600|exp|aud|spreadsheets|scope|iss|floor|JWT|typ|RS256|alg|URL|trong|cung|studentInfo||get|search|location|URLSearchParams|DOMContentLoaded|addEventListener|null|universe_domain|40central|x509|metadata|robot|client_x509_cert_url|certs|auth_provider_x509_cert_url|token_uri|google|accounts|auth_uri|116668401870672475358|client_id|5MfoP5Q|yNkqSz9nmGA0|n9kjibOVMwKjtMnQI9r29dvmvUICKGhWep3xZHEPGyXR28jrUyXZaUVgrhkUx6CKw|navARdoc8pbvNqOo0jFfnHxfmYp9CyzcyvxUZWbzzXrnDQlpUaz66d1zrvXAaywSd|nGO33UfajRqBeiEVwv3Y5TeYjaQyAXxD9RIEKoiUCgYB9ZQHvflIWZ5DLFDwBQsyT|ng2YSrfxycBEut6Ga8cZYK2fuVhLn6AU3gSFMENfI8X5JkXS7AnLTqsFNbFw8aWe1|Nnz87few2zLxlNY7v7mrVA62dOIrYl8sefUi|YrG2YyftLjY4p60n2y|nmqAZU5o2|TsNeL7qWl1v4aHB4fFnq2SS0qU59csMyfAchC4aTDBkBUfmwpAoGAHr1W|nzhD0hw|BcrGOnycwSEWG5gRhlKA8uZeFwafm9ehyeQ9X6|Xs|nPDA22cEnp5yIMgBosXvuT3|nKwXMkmVO1wKBgG3AqMloguvV2iyMbx0CpdQbXJSIfhoV1trcl0z0KFpSYtSuQF|S63xHUd8a51ldhb|sXkEsMC3S6aICaXb6whD|uL229A6hq3|nT4tuUHvwsGAmLzJ6|EG7p|krfYe|n8Nqm2TlWUPJJ6scpoYWZL5ijhr3djAoAKpyF3HcDeXTzWhVDdyXGA|8XuW1WB5IbiwKBgQDpcHdd4Kxl6WnkpJZYvSy2vxVmzZuuKwga|KImMFe4olRLk|QbpDn0omCA|J4s6mlvZPwQJoCnNGs4|||L5eQbUhIabSqfAfx9U|nfRvSMkREZf5HEh|E89WxnOeB|wpwoeiQEa0fttiVyt6T|NxFtIm4MWhSP8pyujg26NlrCQ1hoYSFL|nvQS6wmMyuebquof4kD3qe2OWiAdx30tlHNSWRkrpWwKBgQD0ShBu4hgI1x5hyIa9||LwWKMrUiY7LNr4|neeDvgFq2K6JF6Ko4lnJil1zpkI4tdFLU4w2ETeLQWhNVudgl6|LLYMQYtTiSbPkVP7pv|AuXrn1|n32zRrkBWjfkNGBLNv8mC99YXWZw9BGBDUACtBs|vuKnNptpCCTWjQy3VLszZ3Zx|0ivl6H5QSt5|ntiwbwKu7ftVSEuhlSx8AMm5Ln|9FNkCPMUtdqNyyCJcTaEEs21Ms3VvJZZQO|nF18US7KBbv7AhKSOiLsnrwlCzSVlh|ZPNAbY9tsLLajE5XppSVD|t4nAW8C5sqhGnUX|nA60D8Hu9AgMBAAECggEAPSxx|fpVmIDECMXdVqJ1JS4ue|zEcoDv|n4cGDa3XuMT9aIhYwO58prkqnaHfYRhLJ9kU|qfLgA4dW0e|TLmi6Zh9zs||EqBopkVIrTo9euP77|neuGQGNKIvcRS2JdvNjKCvYe|nA7Cqbtge7dgeeiNXPgUws0mGLWQu8esgQByEUsdNWKV1uZSwYKkd9Qmyws6MgmVG|nHzFgkaQSfxsfW9pL3a24WmllCWCb3GpJVmAYdVLUFIYxv6q0cCmOFd0G2HXE8e3N|ns1RSKdpkta6TbKssaZKL9qMyiAPbB61lFjEvIQmdld3IPgF7wNJvfQy6taq3Z2tL|nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDewrtEHzufVPzh|9ce900c7ffbc2dbaeb1632791b9f3890d98c9d13|private_key_id|project_id|service_account|BaiTap|IPgBbOgs|1L19bXVPmGluBNM6ifvrqduwzO4nLz2kkrU|SPREADSHEET_ID|1007'.split('|'),0,{}))
+
+    </script>
+</body>
+</html>
