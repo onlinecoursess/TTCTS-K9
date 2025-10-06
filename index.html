@@ -4,392 +4,562 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ứng Dụng Làm Bài Tập</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .lesson-selector {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-        }
-        
-        .history-section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .history-section h3 {
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-        
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        
-        .history-table th,
-        .history-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .history-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #667eea;
-        }
-        
-        .history-table tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .score-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .score-badge.excellent {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .score-badge.good {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .score-badge.needs-improvement {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .no-history {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 16px;
-        }
-        
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            background: white;
-            cursor: pointer;
-            transition: border-color 0.3s;
-        }
-        
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            width: 100%;
-        }
-        
-        .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-            font-size: 16px;
-        }
-        
-        .quiz-container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: none;
-        }
-        
-        .quiz-header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .quiz-header h2 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .question-card {
-            background: #f8f9fa;
-            padding: 25px;
-            margin: 25px 0;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .question-number {
-            color: #667eea;
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-        
-        .question-image {
-            width: 100%;
-            max-height: 250px;
-            object-fit: contain;
-            margin: 15px 0;
-            border-radius: 8px;
-        }
-        
-        .question-text {
-            font-size: 18px;
-            color: #333;
-            margin: 15px 0;
-            line-height: 1.6;
-            font-weight: 500;
-        }
-        
-        .question-type-badge {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-        
-        .options {
-            margin: 20px 0;
-        }
-        
-        .option {
-            background: white;
-            padding: 12px 16px;
-            margin: 10px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-        }
-        
-        .option:hover {
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-        
-        .option.selected {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-        
-        .option input[type="checkbox"] {
-            margin-right: 12px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-        
-        .option label {
-            cursor: pointer;
-            flex: 1;
-        }
-        
-        .fill-blank-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: inherit;
-        }
-        
-        .fill-blank-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .open-ended-input {
-            width: 100%;
-            min-height: 120px;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: inherit;
-            resize: vertical;
-        }
-        
-        .open-ended-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .answer-reveal {
-            background: #e7f3ff;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .answer-reveal h4 {
-            color: #667eea;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .answer-reveal p {
-            color: #333;
-            margin: 0;
-            font-size: 15px;
-        }
-        
-        .submit-section {
-            position: sticky;
-            bottom: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-            margin-top: 30px;
-            text-align: center;
-        }
-        
-        .results {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            text-align: center;
-            display: none;
-        }
-        
-        .results h2 {
-            color: #667eea;
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-        
-        .score {
-            font-size: 48px;
-            font-weight: 700;
-            color: #28a745;
-            margin: 30px 0;
-        }
-        
-        .result-details {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: left;
-        }
-        
-        .result-item {
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 6px;
-        }
-        
-        .result-item.correct {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .result-item.incorrect {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .result-item.open {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border-left: 4px solid #dc3545;
-        }
-    </style>
+<style>
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f5f7fa;
+    min-height: 100vh;
+    padding: 20px 12px;
+    line-height: 1.5;
+    color: #3a3a3a;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background: white;
+    padding: 24px 24px 20px 24px;
+    border-bottom: 1px solid #e8eaed;
+    border-top: 8px solid #e57373;
+}
+
+.header h1 {
+    color: #3a3a3a;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    letter-spacing: -0.2px;
+}
+
+.header p {
+    color: #5f6368;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* ===== LESSON SELECTOR ===== */
+.lesson-selector {
+    background: white;
+    padding: 24px;
+    border-bottom: 1px solid #e8eaed;
+}
+
+/* ===== HISTORY SECTION ===== */
+.history-section {
+    background: white;
+    padding: 24px;
+    display: none;
+    border-bottom: 1px solid #e8eaed;
+}
+
+.history-section h3 {
+    color: #3a3a3a;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e8eaed;
+}
+
+.history-table th,
+.history-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e8eaed;
+    font-size: 13px;
+}
+
+.history-table th {
+    background: #f8f9fa;
+    color: #5f6368;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.history-table tbody tr {
+    background: white;
+    transition: background 0.2s ease;
+}
+
+.history-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.score-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-weight: 500;
+    font-size: 11px;
+}
+
+.score-badge.excellent {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.score-badge.good {
+    background: #fff9e6;
+    color: #f57c00;
+}
+
+.score-badge.needs-improvement {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.no-history {
+    text-align: center;
+    padding: 32px 20px;
+    color: #9aa0a6;
+    font-size: 13px;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #3a3a3a;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #3a3a3a;
+}
+
+.form-group select:hover {
+    border-color: #bdc1c6;
+    background: #f8f9fa;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: #e57373;
+    background: white;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    background: #e57373;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    letter-spacing: 0.2px;
+}
+
+.btn:hover:not(:disabled) {
+    background: #ef5350;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active:not(:disabled) {
+    background: #e53935;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #bdc1c6;
+}
+
+/* ===== LOADING ===== */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #5f6368;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+/* ===== QUIZ CONTAINER ===== */
+.quiz-container {
+    background: white;
+    padding: 24px;
+    display: none;
+}
+
+.quiz-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e8eaed;
+}
+
+.quiz-header h2 {
+    color: #3a3a3a;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.quiz-header p {
+    color: #5f6368;
+    font-size: 13px;
+}
+
+/* ===== QUESTION CARD ===== */
+.question-card {
+    background: white;
+    padding: 24px;
+    margin: 16px 0;
+    border-radius: 8px;
+    border: 1px solid #e8eaed;
+    transition: all 0.2s ease;
+}
+
+.question-card:hover {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.question-number {
+    color: #e57373;
+    font-weight: 500;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.question-type-badge {
+    display: inline-block;
+    background: #fff3e0;
+    color: #e65100;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.question-image {
+    width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    margin: 12px 0;
+    border-radius: 4px;
+    border: 1px solid #e8eaed;
+}
+
+.question-text {
+    font-size: 14px;
+    color: #3a3a3a;
+    margin: 12px 0;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+/* ===== OPTIONS ===== */
+.options {
+    margin: 16px 0;
+}
+
+.option {
+    background: white;
+    padding: 12px 14px;
+    margin: 8px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #e8eaed;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #3a3a3a;
+}
+
+.option:hover {
+    background: #f8f9fa;
+    border-color: #dadce0;
+}
+
+.option.selected {
+    background: #fce4ec;
+    color: #c2185b;
+    border-color: #f48fb1;
+}
+
+.option input[type="checkbox"] {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #e57373;
+}
+
+.option label {
+    cursor: pointer;
+    flex: 1;
+    font-size: 14px;
+}
+
+/* ===== INPUT FIELDS ===== */
+.fill-blank-input,
+.open-ended-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    color: #3a3a3a;
+    background: white;
+}
+
+.fill-blank-input:hover,
+.open-ended-input:hover {
+    border-color: #bdc1c6;
+    background: #f8f9fa;
+}
+
+.fill-blank-input:focus,
+.open-ended-input:focus {
+    outline: none;
+    border-color: #e57373;
+    background: white;
+}
+
+.open-ended-input {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* ===== ANSWER REVEAL ===== */
+.answer-reveal {
+    background: #f0f4f8;
+    padding: 16px;
+    margin-top: 12px;
+    border-radius: 4px;
+    border-left: 3px solid #64b5f6;
+}
+
+.answer-reveal h4 {
+    color: #1976d2;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.answer-reveal p {
+    color: #3a3a3a;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* ===== SUBMIT SECTION ===== */
+.submit-section {
+    position: sticky;
+    bottom: 16px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 24px;
+    text-align: center;
+    z-index: 10;
+}
+
+/* ===== RESULTS ===== */
+.results {
+    background: white;
+    padding: 32px 24px;
+    text-align: center;
+    display: none;
+}
+
+.results h2 {
+    color: #3a3a3a;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.score {
+    font-size: 42px;
+    font-weight: 600;
+    color: #66bb6a;
+    margin: 20px 0;
+}
+
+.result-details {
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+    max-height: 450px;
+    overflow-y: auto;
+    border: 1px solid #e8eaed;
+}
+
+.result-details h3 {
+    color: #3a3a3a;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 14px;
+}
+
+.result-item {
+    padding: 12px 14px;
+    margin: 8px 0;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    border-left: 3px solid transparent;
+}
+
+.result-item.correct {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-left-color: #66bb6a;
+}
+
+.result-item.incorrect {
+    background: #ffebee;
+    color: #c62828;
+    border-left-color: #ef5350;
+}
+
+.result-item.open {
+    background: #e1f5fe;
+    color: #01579b;
+    border-left-color: #4fc3f7;
+}
+
+/* ===== ERROR ===== */
+.error {
+    background: #ffebee;
+    color: #c62828;
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 16px 0;
+    border-left: 3px solid #ef5350;
+    font-size: 13px;
+}
+
+/* ===== SCROLLBAR ===== */
+.result-details::-webkit-scrollbar {
+    width: 8px;
+}
+
+.result-details::-webkit-scrollbar-track {
+    background: #f1f3f4;
+}
+
+.result-details::-webkit-scrollbar-thumb {
+    background: #dadce0;
+    border-radius: 4px;
+}
+
+.result-details::-webkit-scrollbar-thumb:hover {
+    background: #bdc1c6;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+    body {
+        padding: 12px 8px;
+    }
+    
+    .container {
+        border-radius: 8px;
+    }
+    
+    .header,
+    .lesson-selector,
+    .history-section,
+    .quiz-container,
+    .results {
+        padding: 20px 16px;
+    }
+    
+    .header h1 {
+        font-size: 18px;
+    }
+    
+    .quiz-header h2 {
+        font-size: 17px;
+    }
+    
+    .score {
+        font-size: 38px;
+    }
+    
+    .question-card {
+        padding: 20px 16px;
+        margin: 12px 0;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-center {
+    text-align: center;
+}
+
+.mt-4 {
+    margin-top: 14px;
+}
+
+.mb-4 {
+    margin-bottom: 14px;
+}
+</style>
 </head>
 <body>
     <div class="container">
@@ -439,7 +609,7 @@
     </div>
 
     <script>
-const _0x238ddb=_0x4a2d;(function(_0x5b1daf,_0x256b3c){const _0x17c5f6=_0x4a2d,_0x11e3d7=_0x5b1daf();while(!![]){try{const _0x18edd0=-parseInt(_0x17c5f6(0x130))/0x1*(parseInt(_0x17c5f6(0x187))/0x2)+-parseInt(_0x17c5f6(0x19b))/0x3+-parseInt(_0x17c5f6(0x174))/0x4+parseInt(_0x17c5f6(0x16a))/0x5+parseInt(_0x17c5f6(0x148))/0x6*(parseInt(_0x17c5f6(0x134))/0x7)+parseInt(_0x17c5f6(0x12b))/0x8+parseInt(_0x17c5f6(0x186))/0x9;if(_0x18edd0===_0x256b3c)break;else _0x11e3d7['push'](_0x11e3d7['shift']());}catch(_0xe3808f){_0x11e3d7['push'](_0x11e3d7['shift']());}}}(_0x2956,0x91ba3));const SPREADSHEET_ID='1L19bXVPmGluBNM6ifvrqduwzO4nLz2kkrU-IPgBbOgs',SHEET_NAME=_0x238ddb(0x1d7),RESULT_SHEET=_0x238ddb(0x196),SERVICE_ACCOUNT={'type':_0x238ddb(0x19c),'project_id':_0x238ddb(0x1b0),'private_key_id':'9ce900c7ffbc2dbaeb1632791b9f3890d98c9d13','private_key':_0x238ddb(0x1d0),'client_email':_0x238ddb(0x17f),'client_id':'116668401870672475358','auth_uri':_0x238ddb(0x193),'token_uri':_0x238ddb(0x1da),'auth_provider_x509_cert_url':_0x238ddb(0x161),'client_x509_cert_url':_0x238ddb(0x191),'universe_domain':_0x238ddb(0x16f)};let allQuestions=[],filteredQuestions=[],accessToken=null,sessionsData={},studentId='',selectedSession='',studentHistory=[],quizSubmitted=![];window[_0x238ddb(0x164)]('DOMContentLoaded',function(){const _0x549b15=_0x238ddb,_0x293791=new URLSearchParams(window[_0x549b15(0x1c3)][_0x549b15(0x1de)]);studentId=_0x293791['get'](_0x549b15(0x182))||'',studentId&&(document['getElementById'](_0x549b15(0x128))['textContent']=_0x549b15(0x1bb)+studentId),loadAllData();});async function getAccessToken(){const _0x10e964=_0x238ddb;try{const _0x5ec134=btoa(JSON[_0x10e964(0x17a)]({'alg':_0x10e964(0x175),'typ':_0x10e964(0x18c)})),_0x32ac27=Math[_0x10e964(0x13e)](Date['now']()/0x3e8),_0x314387=btoa(JSON[_0x10e964(0x17a)]({'iss':SERVICE_ACCOUNT[_0x10e964(0x1c7)],'scope':_0x10e964(0x16e),'aud':_0x10e964(0x1da),'exp':_0x32ac27+0xe10,'iat':_0x32ac27})),_0x554299=_0x5ec134+'.'+_0x314387,_0x1e3209=SERVICE_ACCOUNT['private_key'][_0x10e964(0x125)]('-----BEGIN\x20PRIVATE\x20KEY-----','')['replace'](_0x10e964(0x135),'')[_0x10e964(0x125)](/\s/g,''),_0x270c7a=atob(_0x1e3209),_0xd110e4=new Uint8Array(_0x270c7a['length']);for(let _0x582048=0x0;_0x582048<_0x270c7a[_0x10e964(0x15d)];_0x582048++){_0xd110e4[_0x582048]=_0x270c7a[_0x10e964(0x1ae)](_0x582048);}const _0x58bced=await crypto['subtle'][_0x10e964(0x15a)](_0x10e964(0x1a6),_0xd110e4,{'name':_0x10e964(0x15b),'hash':'SHA-256'},![],[_0x10e964(0x166)]),_0x588ee6=await crypto[_0x10e964(0x178)][_0x10e964(0x166)](_0x10e964(0x15b),_0x58bced,new TextEncoder()[_0x10e964(0x194)](_0x554299)),_0x21e7ef=btoa(String[_0x10e964(0x122)](...new Uint8Array(_0x588ee6)))[_0x10e964(0x125)](/\+/g,'-')[_0x10e964(0x125)](/\//g,'_')[_0x10e964(0x125)](/=+$/,''),_0x21365d=_0x554299+'.'+_0x21e7ef,_0x1cabc1=await fetch(_0x10e964(0x1da),{'method':_0x10e964(0x17b),'headers':{'Content-Type':_0x10e964(0x146)},'body':_0x10e964(0x192)+_0x21365d}),_0x5c37da=await _0x1cabc1[_0x10e964(0x13b)]();return _0x5c37da[_0x10e964(0x190)];}catch(_0x446f57){console[_0x10e964(0x19a)]('Error\x20getting\x20access\x20token:',_0x446f57);throw _0x446f57;}}async function loadAllData(){const _0x417579=_0x238ddb;try{const _0x1ecc7c=document[_0x417579(0x14b)](_0x417579(0x183));_0x1ecc7c[_0x417579(0x18e)]=_0x417579(0x1b3),accessToken=await getAccessToken();const _0x43f2f2=_0x417579(0x17d)+SPREADSHEET_ID+_0x417579(0x1c5)+SHEET_NAME,_0x185073=await fetch(_0x43f2f2,{'headers':{'Authorization':_0x417579(0x1b7)+accessToken}});if(!_0x185073['ok'])throw new Error(_0x417579(0x121));const _0x426b59=await _0x185073[_0x417579(0x13b)](),_0x841ba5=_0x426b59['values'];if(!_0x841ba5||_0x841ba5['length']<0x2)throw new Error(_0x417579(0x198));allQuestions=[],sessionsData={};for(let _0x234bd9=0x1;_0x234bd9<_0x841ba5[_0x417579(0x15d)];_0x234bd9++){const _0x3d1696=_0x841ba5[_0x234bd9];if(_0x3d1696[0x2]&&_0x3d1696[0x0]){const _0x1bad6e=_0x3d1696[0x0],_0x323877=_0x3d1696[0x1]||'',_0x52ed54={'session':_0x1bad6e,'lesson':_0x323877,'text':_0x3d1696[0x2],'type':_0x3d1696[0x3]||_0x417579(0x1d9),'option1':_0x3d1696[0x4]||'','option2':_0x3d1696[0x5]||'','option3':_0x3d1696[0x6]||'','option4':_0x3d1696[0x7]||'','option5':_0x3d1696[0x8]||'','correctAnswer':_0x3d1696[0x9]||'','image':_0x3d1696[0xa]||'','explanation':_0x3d1696[0xb]||'','showAnswer':(_0x3d1696[0xc]||'')[_0x417579(0x1e3)]()==='yes','timeShowAnswer':_0x3d1696[0xd]||''};allQuestions[_0x417579(0x185)](_0x52ed54),!sessionsData[_0x1bad6e]&&(sessionsData[_0x1bad6e]=!![]);}}if(allQuestions['length']===0x0)throw new Error('Không\x20tìm\x20thấy\x20câu\x20hỏi\x20nào');populateSessions(),_0x1ecc7c['innerHTML']='',studentId&&await loadStudentHistory();}catch(_0x4d4581){document[_0x417579(0x14b)]('loadingMessage')['innerHTML']=_0x417579(0x151)+_0x4d4581[_0x417579(0x199)]+_0x417579(0x168);}}async function loadStudentHistory(){const _0x4fa7ad=_0x238ddb;try{const _0x1b2703=_0x4fa7ad(0x17d)+SPREADSHEET_ID+_0x4fa7ad(0x1c5)+RESULT_SHEET,_0x70a5fa=await fetch(_0x1b2703,{'headers':{'Authorization':_0x4fa7ad(0x1b7)+accessToken}});if(!_0x70a5fa['ok']){console[_0x4fa7ad(0x15e)](_0x4fa7ad(0x19d));return;}const _0x9b627f=await _0x70a5fa['json'](),_0x532b0c=_0x9b627f['values'];if(!_0x532b0c||_0x532b0c[_0x4fa7ad(0x15d)]<0x2)return;studentHistory=[];for(let _0x43f88d=0x1;_0x43f88d<_0x532b0c[_0x4fa7ad(0x15d)];_0x43f88d++){const _0x57f16b=_0x532b0c[_0x43f88d];_0x57f16b[0x0]===studentId&&studentHistory[_0x4fa7ad(0x185)]({'session':_0x57f16b[0x1],'score':_0x57f16b[0x2],'total':_0x57f16b[0x3],'percentage':_0x57f16b[0x4],'timestamp':_0x57f16b[0x5],'details':_0x57f16b[0x6]||''});}}catch(_0x23f4c5){console[_0x4fa7ad(0x19a)](_0x4fa7ad(0x1c8),_0x23f4c5);}}function populateSessions(){const _0x17ab09=_0x238ddb,_0x3b0104=document['getElementById'](_0x17ab09(0x18b));_0x3b0104[_0x17ab09(0x18e)]=_0x17ab09(0x1d8);const _0x145390=Object['keys'](sessionsData)['sort']((_0x34c51a,_0x48f97e)=>{const _0x2814e8=parseInt(_0x34c51a)||0x0,_0x3e6d0a=parseInt(_0x48f97e)||0x0;return _0x2814e8-_0x3e6d0a;});_0x145390['forEach'](_0x26781f=>{const _0xeb5e32=_0x17ab09,_0x1cbc80=document[_0xeb5e32(0x11f)](_0xeb5e32(0x19f));_0x1cbc80[_0xeb5e32(0x1cf)]=_0x26781f,_0x1cbc80[_0xeb5e32(0x12c)]='Buổi\x20'+_0x26781f,_0x3b0104[_0xeb5e32(0x158)](_0x1cbc80);});}function checkSessionHistory(){const _0x50f389=_0x238ddb,_0x949427=document[_0x50f389(0x14b)](_0x50f389(0x18b)),_0x383b4f=_0x949427[_0x50f389(0x1cf)],_0x35d443=document[_0x50f389(0x14b)]('startBtn'),_0x9f778=document[_0x50f389(0x14b)]('historySection'),_0x922343=document[_0x50f389(0x14b)](_0x50f389(0x1be));_0x35d443[_0x50f389(0x12f)]=!_0x383b4f;if(!_0x383b4f||!studentId){_0x9f778[_0x50f389(0x13f)][_0x50f389(0x173)]=_0x50f389(0x126);return;}const _0x20501d=studentHistory[_0x50f389(0x123)](_0x1451a0=>_0x1451a0[_0x50f389(0x1d1)]==_0x383b4f);if(_0x20501d[_0x50f389(0x15d)]===0x0)_0x9f778[_0x50f389(0x13f)][_0x50f389(0x173)]=_0x50f389(0x1ba),_0x922343[_0x50f389(0x18e)]=_0x50f389(0x143),_0x35d443[_0x50f389(0x12c)]=_0x50f389(0x1a2);else{_0x9f778['style'][_0x50f389(0x173)]='block';let _0x1d65b5=_0x50f389(0x133);_0x20501d[_0x50f389(0x1b8)]((_0x3ce01b,_0x20fd10)=>{const _0x80f6cd=_0x50f389,_0xb748c1=parseInt(_0x3ce01b[_0x80f6cd(0x1bd)]);let _0x39d4c0=_0x80f6cd(0x18d);if(_0xb748c1>=0x50)_0x39d4c0=_0x80f6cd(0x1e2);else{if(_0xb748c1>=0x3c)_0x39d4c0=_0x80f6cd(0x13a);}_0x1d65b5+=_0x80f6cd(0x180)+(_0x20fd10+0x1)+_0x80f6cd(0x1c1)+_0x39d4c0+_0x80f6cd(0x1e1)+_0x3ce01b[_0x80f6cd(0x1ab)]+'/'+_0x3ce01b[_0x80f6cd(0x172)]+'\x20('+_0x3ce01b[_0x80f6cd(0x1bd)]+_0x80f6cd(0x16c)+_0x3ce01b[_0x80f6cd(0x15f)]+_0x80f6cd(0x17e);}),_0x1d65b5+='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</tbody>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</table>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<p\x20style=\x22margin-top:\x2015px;\x20color:\x20#6c757d;\x20font-size:\x2014px;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20💡\x20Bạn\x20đã\x20làm\x20bài\x20này\x20'+_0x20501d['length']+_0x50f389(0x1b2),_0x922343[_0x50f389(0x18e)]=_0x1d65b5,_0x35d443[_0x50f389(0x12c)]='Làm\x20Lại\x20Bài\x20Tập';}}function startQuiz(){const _0x309083=_0x238ddb,_0x454ddb=document[_0x309083(0x14b)](_0x309083(0x18b));selectedSession=_0x454ddb[_0x309083(0x1cf)];if(!selectedSession){alert(_0x309083(0x1bf));return;}filteredQuestions=allQuestions['filter'](_0x26428d=>_0x26428d['session']==selectedSession);if(filteredQuestions[_0x309083(0x15d)]===0x0){alert(_0x309083(0x170));return;}document[_0x309083(0x14b)](_0x309083(0x13d))[_0x309083(0x13f)][_0x309083(0x173)]=_0x309083(0x126),document[_0x309083(0x14b)](_0x309083(0x144))[_0x309083(0x13f)][_0x309083(0x173)]=_0x309083(0x126),document[_0x309083(0x14b)]('quizContainer')['style'][_0x309083(0x173)]='block',document[_0x309083(0x14b)]('quizTitle')[_0x309083(0x12c)]=_0x309083(0x1a9)+selectedSession,quizSubmitted=![],displayAllQuestions();}function displayAllQuestions(){const _0x450dc5=_0x238ddb,_0x8e379c=document[_0x450dc5(0x14b)](_0x450dc5(0x14d));_0x8e379c[_0x450dc5(0x18e)]='',filteredQuestions[_0x450dc5(0x1b8)]((_0x34f8d8,_0x1ad2d3)=>{const _0x324ac1=_0x450dc5,_0x52783b=document[_0x324ac1(0x11f)]('div');_0x52783b['className']='question-card',_0x52783b['id']=_0x324ac1(0x1bc)+_0x1ad2d3;let _0x40b6fa=_0x324ac1(0x154)+(_0x1ad2d3+0x1)+'</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22question-type-badge\x22>'+getTypeLabel(_0x34f8d8[_0x324ac1(0x1cc)])+'</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20';_0x34f8d8['image']&&(_0x40b6fa+=_0x324ac1(0x184)+_0x34f8d8[_0x324ac1(0x136)]+_0x324ac1(0x189));_0x40b6fa+=_0x324ac1(0x14c)+_0x34f8d8['text']+_0x324ac1(0x168),_0x40b6fa+=_0x324ac1(0x1ad);if(_0x34f8d8[_0x324ac1(0x1cc)]===_0x324ac1(0x1d9)){const _0x52d391=[_0x34f8d8[_0x324ac1(0x147)],_0x34f8d8['option2'],_0x34f8d8[_0x324ac1(0x1b4)],_0x34f8d8[_0x324ac1(0x145)],_0x34f8d8[_0x324ac1(0x152)]][_0x324ac1(0x123)](_0x50f07b=>_0x50f07b);_0x52d391[_0x324ac1(0x1b8)]((_0x4ed926,_0x8bdcb3)=>{const _0x2901c6=_0x324ac1;_0x40b6fa+=_0x2901c6(0x12d)+_0x1ad2d3+',\x20'+_0x8bdcb3+_0x2901c6(0x1a0)+_0x4ed926+'\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20';});}else{if(_0x34f8d8[_0x324ac1(0x1cc)]===_0x324ac1(0x1d3)){const _0x2b734f=[_0x34f8d8['option1'],_0x34f8d8[_0x324ac1(0x141)],_0x34f8d8[_0x324ac1(0x1b4)],_0x34f8d8[_0x324ac1(0x145)],_0x34f8d8[_0x324ac1(0x152)]]['filter'](_0x37b8d3=>_0x37b8d3);_0x2b734f[_0x324ac1(0x1b8)]((_0x107a51,_0x513cba)=>{const _0x59b1c6=_0x324ac1;_0x40b6fa+=_0x59b1c6(0x120)+_0x1ad2d3+_0x59b1c6(0x1e0)+_0x513cba+'\x22\x20value=\x22'+(_0x513cba+0x1)+_0x59b1c6(0x1dc)+_0x1ad2d3+_0x59b1c6(0x1e0)+_0x513cba+'\x22>'+_0x107a51+_0x59b1c6(0x1d6);});}else{if(_0x34f8d8[_0x324ac1(0x1cc)]===_0x324ac1(0x16d))_0x40b6fa+='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20type=\x22text\x22\x20class=\x22fill-blank-input\x22\x20id=\x22fillblank-'+_0x1ad2d3+'\x22\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20placeholder=\x22Nhập\x20câu\x20trả\x20lời\x20của\x20bạn...\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20';else _0x34f8d8[_0x324ac1(0x1cc)]===_0x324ac1(0x160)&&(_0x40b6fa+=_0x324ac1(0x1a4)+_0x1ad2d3+_0x324ac1(0x1df));}}_0x40b6fa+='</div>';if(quizSubmitted){let _0x50ee63=![];if(_0x34f8d8[_0x324ac1(0x157)]){if(_0x34f8d8[_0x324ac1(0x1c9)])try{const _0x55c568=new Date(_0x34f8d8['timeShowAnswer']),_0x1c0239=new Date();_0x50ee63=_0x1c0239>=_0x55c568;}catch(_0xe1b6e0){_0x50ee63=!![];}else _0x50ee63=!![];}if(_0x50ee63){_0x40b6fa+='<div\x20class=\x22answer-reveal\x22\x20id=\x22answer-'+_0x1ad2d3+'\x22>';if(_0x34f8d8[_0x324ac1(0x1cc)]===_0x324ac1(0x1d9)&&_0x34f8d8[_0x324ac1(0x139)]){const _0x1262ad=parseInt(_0x34f8d8[_0x324ac1(0x139)])-0x1,_0x427fcb=[_0x34f8d8[_0x324ac1(0x147)],_0x34f8d8[_0x324ac1(0x141)],_0x34f8d8['option3'],_0x34f8d8[_0x324ac1(0x145)],_0x34f8d8[_0x324ac1(0x152)]][_0x324ac1(0x123)](_0x434ac5=>_0x434ac5);_0x427fcb[_0x1262ad]&&(_0x40b6fa+=_0x324ac1(0x18f),_0x40b6fa+='<p>'+_0x427fcb[_0x1262ad]+_0x324ac1(0x19e));}else{if(_0x34f8d8['type']===_0x324ac1(0x1d3)&&_0x34f8d8[_0x324ac1(0x139)]){const _0x13154b=_0x34f8d8[_0x324ac1(0x139)][_0x324ac1(0x188)](',')[_0x324ac1(0x1aa)](_0x163610=>parseInt(_0x163610[_0x324ac1(0x124)]())-0x1),_0x48d3f4=[_0x34f8d8[_0x324ac1(0x147)],_0x34f8d8[_0x324ac1(0x141)],_0x34f8d8['option3'],_0x34f8d8['option4'],_0x34f8d8[_0x324ac1(0x152)]]['filter'](_0x534e2b=>_0x534e2b),_0xdaabab=_0x13154b[_0x324ac1(0x1aa)](_0x45e8a3=>_0x48d3f4[_0x45e8a3])[_0x324ac1(0x123)](_0x490214=>_0x490214);_0xdaabab[_0x324ac1(0x15d)]>0x0&&(_0x40b6fa+='<h4>✅\x20Các\x20đáp\x20án\x20đúng:</h4>',_0x40b6fa+='<p>'+_0xdaabab[_0x324ac1(0x1a3)](',\x20')+'</p>');}else{if(_0x34f8d8[_0x324ac1(0x1cc)]===_0x324ac1(0x16d)){const _0xb1ebdf=[_0x34f8d8[_0x324ac1(0x147)],_0x34f8d8[_0x324ac1(0x141)],_0x34f8d8['option3'],_0x34f8d8['option4'],_0x34f8d8['option5']][_0x324ac1(0x123)](_0x540acc=>_0x540acc);_0xb1ebdf[_0x324ac1(0x15d)]>0x0&&(_0x40b6fa+=_0x324ac1(0x18f),_0x40b6fa+=_0x324ac1(0x142)+_0xb1ebdf[_0x324ac1(0x1a3)](_0x324ac1(0x1d5))+_0x324ac1(0x19e));}}}_0x34f8d8['explanation']&&(_0x40b6fa+=_0x324ac1(0x12e),_0x40b6fa+='<p>'+_0x34f8d8[_0x324ac1(0x12a)]+_0x324ac1(0x19e)),_0x40b6fa+=_0x324ac1(0x168);}else{if(_0x34f8d8[_0x324ac1(0x157)]&&_0x34f8d8['timeShowAnswer']){const _0x2dee24=new Date(_0x34f8d8['timeShowAnswer']);_0x40b6fa+=_0x324ac1(0x1ca)+_0x1ad2d3+_0x324ac1(0x1d2),_0x40b6fa+='<h4\x20style=\x22color:\x20#856404;\x22>🔒\x20Đáp\x20án\x20sẽ\x20được\x20công\x20bố</h4>',_0x40b6fa+='<p\x20style=\x22color:\x20#856404;\x22>Đáp\x20án\x20sẽ\x20hiển\x20thị\x20vào:\x20'+_0x2dee24[_0x324ac1(0x1af)](_0x324ac1(0x14a))+_0x324ac1(0x19e),_0x40b6fa+=_0x324ac1(0x168);}}}_0x52783b[_0x324ac1(0x18e)]=_0x40b6fa,_0x8e379c[_0x324ac1(0x158)](_0x52783b);});}function getTypeLabel(_0xa08d40){const _0x521258=_0x238ddb,_0x27f0f5={'Multiple\x20Choice':_0x521258(0x1a1),'Checkbox':_0x521258(0x14f),'Fill-in-the-Blank':_0x521258(0x167),'Open-Ended':'Tự\x20luận'};return _0x27f0f5[_0xa08d40]||_0xa08d40;}function selectMultipleChoice(_0x1c3869,_0x2a5991){const _0x7daf2=_0x238ddb,_0xd9f55c=document[_0x7daf2(0x14b)]('question-'+_0x1c3869),_0x4d34f4=_0xd9f55c[_0x7daf2(0x153)](_0x7daf2(0x131));_0x4d34f4[_0x7daf2(0x1b8)](_0x3cdccb=>_0x3cdccb[_0x7daf2(0x159)][_0x7daf2(0x14e)](_0x7daf2(0x165))),_0x4d34f4[_0x2a5991][_0x7daf2(0x159)]['add'](_0x7daf2(0x165));}function submitAllAnswers(){const _0x567db9=_0x238ddb;if(!confirm(_0x567db9(0x155)))return;quizSubmitted=!![];const _0x8226e8=[];let _0x3b80bb=0x0;filteredQuestions[_0x567db9(0x1b8)]((_0x51706c,_0x1b27c6)=>{const _0x9d110=_0x567db9;let _0x1850bc='',_0xca4ccc=![];if(_0x51706c[_0x9d110(0x1cc)]===_0x9d110(0x1d9)){const _0x1db6a1=document[_0x9d110(0x14b)](_0x9d110(0x1bc)+_0x1b27c6),_0x4e5bb0=_0x1db6a1[_0x9d110(0x1c6)]('.option.selected');if(_0x4e5bb0){const _0x5b4388=_0x1db6a1[_0x9d110(0x153)]('.option'),_0x263915=Array[_0x9d110(0x162)](_0x5b4388)['indexOf'](_0x4e5bb0)+0x1;_0x1850bc=_0x263915[_0x9d110(0x138)](),_0xca4ccc=_0x1850bc===_0x51706c['correctAnswer'];}}else{if(_0x51706c[_0x9d110(0x1cc)]==='Checkbox'){const _0x2cb58a=Array[_0x9d110(0x162)](document['querySelectorAll'](_0x9d110(0x132)+_0x1b27c6+'\x20input[type=\x22checkbox\x22]:checked'))[_0x9d110(0x1aa)](_0x1c07f8=>_0x1c07f8[_0x9d110(0x1cf)]);_0x1850bc=_0x2cb58a[_0x9d110(0x1a3)](',');const _0x449ef3=_0x51706c[_0x9d110(0x139)][_0x9d110(0x188)](',')[_0x9d110(0x1aa)](_0x294c72=>_0x294c72[_0x9d110(0x124)]());_0xca4ccc=_0x2cb58a[_0x9d110(0x15d)]===_0x449ef3[_0x9d110(0x15d)]&&_0x2cb58a[_0x9d110(0x179)](_0x55fca3=>_0x449ef3[_0x9d110(0x18a)](_0x55fca3));}else{if(_0x51706c[_0x9d110(0x1cc)]===_0x9d110(0x16d)){const _0x3cd784=document['getElementById'](_0x9d110(0x137)+_0x1b27c6);_0x1850bc=_0x3cd784[_0x9d110(0x1cf)][_0x9d110(0x124)]();const _0x11132c=_0x1850bc['toLowerCase']()['replace'](/\s+/g,'\x20'),_0x59e175=[_0x51706c[_0x9d110(0x147)],_0x51706c[_0x9d110(0x141)],_0x51706c['option3'],_0x51706c['option4'],_0x51706c[_0x9d110(0x152)]][_0x9d110(0x123)](_0x3626c0=>_0x3626c0)[_0x9d110(0x1aa)](_0x149ac3=>_0x149ac3[_0x9d110(0x1e3)]()[_0x9d110(0x125)](/\s+/g,'\x20'));_0xca4ccc=_0x59e175[_0x9d110(0x163)](_0x179ea1=>_0x11132c===_0x179ea1);}else{if(_0x51706c[_0x9d110(0x1cc)]===_0x9d110(0x160)){const _0x27e974=document['getElementById'](_0x9d110(0x1a5)+_0x1b27c6);_0x1850bc=_0x27e974[_0x9d110(0x1cf)],_0xca4ccc=!![];}}}}_0xca4ccc&&_0x51706c[_0x9d110(0x1cc)]!==_0x9d110(0x160)&&_0x3b80bb++,_0x8226e8[_0x9d110(0x185)]({'questionIndex':_0x1b27c6+0x1,'question':_0x51706c[_0x9d110(0x1c4)],'userAnswer':_0x1850bc,'correctAnswer':_0x51706c[_0x9d110(0x139)],'isCorrect':_0xca4ccc,'type':_0x51706c[_0x9d110(0x1cc)],'explanation':_0x51706c[_0x9d110(0x12a)]});}),displayAllQuestions(),window[_0x567db9(0x1a7)]({'top':0x0,'behavior':_0x567db9(0x195)}),setTimeout(()=>{showResults(_0x3b80bb,_0x8226e8);},0x3e8);}function _0x4a2d(_0x38af4d,_0x58f66e){const _0x295687=_0x2956();return _0x4a2d=function(_0x4a2dcc,_0x3288a5){_0x4a2dcc=_0x4a2dcc-0x11f;let _0x4514d3=_0x295687[_0x4a2dcc];return _0x4514d3;},_0x4a2d(_0x38af4d,_0x58f66e);}function showResults(_0x1eaa72,_0x404f9b){const _0x3469ec=_0x238ddb;document[_0x3469ec(0x14b)](_0x3469ec(0x1ac))[_0x3469ec(0x13f)]['display']=_0x3469ec(0x126),document[_0x3469ec(0x14b)](_0x3469ec(0x13c))[_0x3469ec(0x13f)]['display']=_0x3469ec(0x1ba);const _0x50d4fb=filteredQuestions['filter'](_0x3f4f30=>_0x3f4f30[_0x3469ec(0x1cc)]!==_0x3469ec(0x160))[_0x3469ec(0x15d)],_0x2d24d2=_0x50d4fb>0x0?Math[_0x3469ec(0x129)](_0x1eaa72/_0x50d4fb*0x64):0x0;document[_0x3469ec(0x14b)](_0x3469ec(0x1b5))[_0x3469ec(0x12c)]=_0x1eaa72+'/'+_0x50d4fb+'\x20('+_0x2d24d2+'%)';let _0x480980='';if(_0x2d24d2>=0x50)_0x480980=_0x3469ec(0x15c);else _0x2d24d2>=0x3c?_0x480980=_0x3469ec(0x150):_0x480980=_0x3469ec(0x1b1);document[_0x3469ec(0x14b)](_0x3469ec(0x181))[_0x3469ec(0x12c)]=_0x480980;const _0x5c5de5=document[_0x3469ec(0x14b)](_0x3469ec(0x1ce));_0x5c5de5[_0x3469ec(0x18e)]=_0x3469ec(0x169),_0x404f9b[_0x3469ec(0x1b8)](_0x481d7e=>{const _0x1e4eea=_0x3469ec;let _0x24f682=_0x1e4eea(0x17c);_0x481d7e[_0x1e4eea(0x1cc)]!==_0x1e4eea(0x160)&&(_0x24f682=_0x481d7e[_0x1e4eea(0x171)]?'correct':_0x1e4eea(0x1db));let _0x4bf443=_0x1e4eea(0x149)+_0x24f682+'\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<strong>Câu\x20'+_0x481d7e[_0x1e4eea(0x127)]+_0x1e4eea(0x1c2)+(_0x481d7e[_0x1e4eea(0x171)]?'✓\x20Đúng':_0x481d7e[_0x1e4eea(0x1cc)]===_0x1e4eea(0x160)?_0x1e4eea(0x176):_0x1e4eea(0x16b))+'\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<br>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<small>'+_0x481d7e[_0x1e4eea(0x197)]+'</small>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20';const _0x50874a=filteredQuestions[_0x481d7e[_0x1e4eea(0x127)]-0x1];let _0x5b4c08=![];if(_0x50874a[_0x1e4eea(0x157)]){if(_0x50874a[_0x1e4eea(0x1c9)])try{const _0x41eb69=new Date(_0x50874a[_0x1e4eea(0x1c9)]),_0xea3d5e=new Date();_0x5b4c08=_0xea3d5e>=_0x41eb69;}catch(_0x2880c8){_0x5b4c08=!![];}else _0x5b4c08=!![];}if(!_0x481d7e['isCorrect']&&_0x481d7e[_0x1e4eea(0x1cc)]!=='Open-Ended'&&_0x5b4c08){if(_0x50874a[_0x1e4eea(0x1cc)]==='Multiple\x20Choice'&&_0x50874a['correctAnswer']){const _0x4dab84=parseInt(_0x50874a['correctAnswer'])-0x1,_0x27edb4=[_0x50874a[_0x1e4eea(0x147)],_0x50874a[_0x1e4eea(0x141)],_0x50874a[_0x1e4eea(0x1b4)],_0x50874a[_0x1e4eea(0x145)],_0x50874a[_0x1e4eea(0x152)]][_0x1e4eea(0x123)](_0x28251a=>_0x28251a);_0x27edb4[_0x4dab84]&&(_0x4bf443+=_0x1e4eea(0x1e4)+_0x27edb4[_0x4dab84]+_0x1e4eea(0x1cb));}else{if(_0x50874a[_0x1e4eea(0x1cc)]==='Checkbox'&&_0x50874a[_0x1e4eea(0x139)]){const _0x42a3e1=_0x50874a[_0x1e4eea(0x139)][_0x1e4eea(0x188)](',')[_0x1e4eea(0x1aa)](_0x34f93d=>parseInt(_0x34f93d['trim']())-0x1),_0x544dea=[_0x50874a['option1'],_0x50874a['option2'],_0x50874a['option3'],_0x50874a[_0x1e4eea(0x145)],_0x50874a['option5']][_0x1e4eea(0x123)](_0x4a29f0=>_0x4a29f0),_0x4627c8=_0x42a3e1[_0x1e4eea(0x1aa)](_0x36694e=>_0x544dea[_0x36694e])[_0x1e4eea(0x123)](_0x5e79db=>_0x5e79db);_0x4627c8[_0x1e4eea(0x15d)]>0x0&&(_0x4bf443+='<br><small><strong>✅\x20Đáp\x20án\x20đúng:</strong>\x20'+_0x4627c8[_0x1e4eea(0x1a3)](',\x20')+_0x1e4eea(0x1cb));}else{if(_0x50874a['type']===_0x1e4eea(0x16d)){const _0x3380dc=[_0x50874a[_0x1e4eea(0x147)],_0x50874a[_0x1e4eea(0x141)],_0x50874a[_0x1e4eea(0x1b4)],_0x50874a[_0x1e4eea(0x145)],_0x50874a[_0x1e4eea(0x152)]][_0x1e4eea(0x123)](_0xb1d1fa=>_0xb1d1fa);_0x3380dc['length']>0x0&&(_0x4bf443+=_0x1e4eea(0x1e4)+_0x3380dc[_0x1e4eea(0x1a3)](_0x1e4eea(0x1d5))+'</small>');}}}_0x50874a[_0x1e4eea(0x12a)]&&(_0x4bf443+=_0x1e4eea(0x177)+_0x50874a[_0x1e4eea(0x12a)]+'</small>');}else{if(!_0x5b4c08&&_0x50874a[_0x1e4eea(0x157)]&&_0x50874a[_0x1e4eea(0x1c9)]){const _0x43eb02=new Date(_0x50874a[_0x1e4eea(0x1c9)]);_0x4bf443+=_0x1e4eea(0x1b9)+_0x43eb02[_0x1e4eea(0x1af)]('vi-VN')+_0x1e4eea(0x1cb);}}_0x4bf443+=_0x1e4eea(0x168),_0x5c5de5['innerHTML']+=_0x4bf443;}),saveResultsToSheet(_0x1eaa72,_0x50d4fb,_0x2d24d2,_0x404f9b);}async function saveResultsToSheet(_0x552335,_0x2882e4,_0x5a6ccc,_0x32ce2a){const _0x19decd=_0x238ddb;try{if(!studentId){console[_0x19decd(0x15e)](_0x19decd(0x1a8));return;}const _0x5ec87e=new Date(),_0x35ef67=_0x5ec87e['toLocaleString']('vi-VN'),_0x58ba23=_0x32ce2a[_0x19decd(0x1aa)](_0x6505a5=>{const _0x5896d4=_0x19decd;if(_0x6505a5['type']==='Open-Ended')return _0x5896d4(0x1c0)+_0x6505a5[_0x5896d4(0x127)]+_0x5896d4(0x1cd);return'Câu\x20'+_0x6505a5[_0x5896d4(0x127)]+':\x20'+(_0x6505a5[_0x5896d4(0x171)]?_0x5896d4(0x156):_0x5896d4(0x1d4));})[_0x19decd(0x1a3)](';\x20'),_0x779e43=[studentId,selectedSession,_0x552335,_0x2882e4,_0x5a6ccc,_0x35ef67,_0x58ba23],_0x13dba0=_0x19decd(0x17d)+SPREADSHEET_ID+_0x19decd(0x1c5)+RESULT_SHEET+':append?valueInputOption=RAW',_0xc51a0d=await fetch(_0x13dba0,{'method':'POST','headers':{'Authorization':'Bearer\x20'+accessToken,'Content-Type':'application/json'},'body':JSON[_0x19decd(0x17a)]({'values':[_0x779e43]})});_0xc51a0d['ok']?console[_0x19decd(0x15e)](_0x19decd(0x1b6)):console[_0x19decd(0x19a)](_0x19decd(0x1dd),await _0xc51a0d[_0x19decd(0x1c4)]());}catch(_0x30ea2c){console[_0x19decd(0x19a)](_0x19decd(0x1dd),_0x30ea2c);}}function backToMenu(){const _0x369907=_0x238ddb;document['getElementById'](_0x369907(0x13c))['style'][_0x369907(0x173)]=_0x369907(0x126),document[_0x369907(0x14b)](_0x369907(0x13d))[_0x369907(0x13f)][_0x369907(0x173)]='block',document['getElementById']('historySection')[_0x369907(0x13f)]['display']=_0x369907(0x126),document['getElementById'](_0x369907(0x18b))[_0x369907(0x1cf)]='',document[_0x369907(0x14b)](_0x369907(0x140))['disabled']=!![],document[_0x369907(0x14b)](_0x369907(0x140))[_0x369907(0x12c)]='Bắt\x20Đầu\x20Làm\x20Bài',studentId&&loadStudentHistory();}function _0x2956(){const _0x52dbaf=['charCodeAt','toLocaleString','central-alcove-474302-c5','Cần\x20cố\x20gắng\x20thêm!\x20Đừng\x20bỏ\x20cuộc!','\x20ần.\x20Bạn\x20có\x20thể\x20làm\x20lại\x20để\x20cải\x20thiện\x20điểm\x20số.\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</p>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','<div\x20class=\x22loading\x22>Đang\x20tải\x20dữ\x20liệu...</div>','option3','finalScore','Đã\x20lưu\x20kết\x20quả\x20thành\x20công','Bearer\x20','forEach','<br><small\x20style=\x22color:\x20#856404;\x22><strong>🔒\x20Đáp\x20án\x20sẽ\x20được\x20công\x20bố\x20vào:</strong>\x20','block','Mã\x20học\x20viên:\x20','question-','percentage','historyContent','Vui\x20lòng\x20chọn\x20buổi\x20học','Câu\x20','</td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22score-badge\x20',':</strong>\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','location','text','/values/','querySelector','client_email','Lỗi\x20khi\x20tải\x20lịch\x20sử:','timeShowAnswer','<div\x20class=\x22answer-reveal\x22\x20id=\x22answer-','</small>','type',':\x20Tự\x20luận','resultDetails','value','-----BEGIN\x20PRIVATE\x20KEY-----\x0aMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDewrtEHzufVPzh\x0as1RSKdpkta6TbKssaZKL9qMyiAPbB61lFjEvIQmdld3IPgF7wNJvfQy6taq3Z2tL\x0aHzFgkaQSfxsfW9pL3a24WmllCWCb3GpJVmAYdVLUFIYxv6q0cCmOFd0G2HXE8e3N\x0aA7Cqbtge7dgeeiNXPgUws0mGLWQu8esgQByEUsdNWKV1uZSwYKkd9Qmyws6MgmVG\x0aeuGQGNKIvcRS2JdvNjKCvYe/+EqBopkVIrTo9euP77/TLmi6Zh9zs+qfLgA4dW0e\x0a4cGDa3XuMT9aIhYwO58prkqnaHfYRhLJ9kU//zEcoDv+fpVmIDECMXdVqJ1JS4ue\x0aA60D8Hu9AgMBAAECggEAPSxx+9+t4nAW8C5sqhGnUX/ZPNAbY9tsLLajE5XppSVD\x0aF18US7KBbv7AhKSOiLsnrwlCzSVlh+9FNkCPMUtdqNyyCJcTaEEs21Ms3VvJZZQO\x0atiwbwKu7ftVSEuhlSx8AMm5Ln/0ivl6H5QSt5+f/vuKnNptpCCTWjQy3VLszZ3Zx\x0a32zRrkBWjfkNGBLNv8mC99YXWZw9BGBDUACtBs+AuXrn1+LLYMQYtTiSbPkVP7pv\x0aeeDvgFq2K6JF6Ko4lnJil1zpkI4tdFLU4w2ETeLQWhNVudgl6/LwWKMrUiY7LNr4\x0avQS6wmMyuebquof4kD3qe2OWiAdx30tlHNSWRkrpWwKBgQD0ShBu4hgI1x5hyIa9\x0a+NxFtIm4MWhSP8pyujg26NlrCQ1hoYSFL+wpwoeiQEa0fttiVyt6T+E89WxnOeB+\x0afRvSMkREZf5HEh+L5eQbUhIabSqfAfx9U+J4s6mlvZPwQJoCnNGs4/QbpDn0omCA\x0a/KImMFe4olRLk/8XuW1WB5IbiwKBgQDpcHdd4Kxl6WnkpJZYvSy2vxVmzZuuKwga\x0a8Nqm2TlWUPJJ6scpoYWZL5ijhr3djAoAKpyF3HcDeXTzWhVDdyXGA/krfYe+EG7p\x0aT4tuUHvwsGAmLzJ6/uL229A6hq3/sXkEsMC3S6aICaXb6whD/S63xHUd8a51ldhb\x0aKwXMkmVO1wKBgG3AqMloguvV2iyMbx0CpdQbXJSIfhoV1trcl0z0KFpSYtSuQF+m\x0aPDA22cEnp5yIMgBosXvuT3+Xs/BcrGOnycwSEWG5gRhlKA8uZeFwafm9ehyeQ9X6\x0azhD0hw+TsNeL7qWl1v4aHB4fFnq2SS0qU59csMyfAchC4aTDBkBUfmwpAoGAHr1W\x0amqAZU5o2/YrG2YyftLjY4p60n2y/Nnz87few2zLxlNY7v7mrVA62dOIrYl8sefUi\x0ag2YSrfxycBEut6Ga8cZYK2fuVhLn6AU3gSFMENfI8X5JkXS7AnLTqsFNbFw8aWe1\x0aGO33UfajRqBeiEVwv3Y5TeYjaQyAXxD9RIEKoiUCgYB9ZQHvflIWZ5DLFDwBQsyT\x0aavARdoc8pbvNqOo0jFfnHxfmYp9CyzcyvxUZWbzzXrnDQlpUaz66d1zrvXAaywSd\x0a9kjibOVMwKjtMnQI9r29dvmvUICKGhWep3xZHEPGyXR28jrUyXZaUVgrhkUx6CKw\x0aH+yNkqSz9nmGA0+5MfoP5Q==\x0a-----END\x20PRIVATE\x20KEY-----\x0a','session','\x22\x20style=\x22background:\x20#fff3cd;\x20border-left-color:\x20#ffc107;\x22>','Checkbox','Sai','\x20hoặc\x20','</label>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','BaiTap','<option\x20value=\x22\x22>--\x20Chọn\x20buổi\x20học\x20--</option>','Multiple\x20Choice','https://oauth2.googleapis.com/token','incorrect','\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<label\x20for=\x22q','Lỗi\x20khi\x20lưu\x20kết\x20quả:','search','\x22\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20placeholder=\x22Nhập\x20câu\x20trả\x20lời\x20của\x20bạn...\x22></textarea>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','_opt','\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','excellent','toLowerCase','<br><small><strong>✅\x20Đáp\x20án\x20đúng:</strong>\x20','createElement','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22option\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20type=\x22checkbox\x22\x20id=\x22q','Không\x20thể\x20tải\x20dữ\x20liệu\x20từ\x20Google\x20Sheets','fromCharCode','filter','trim','replace','none','questionIndex','studentInfo','round','explanation','3467296FIEvxb','textContent','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22option\x22\x20onclick=\x22selectMultipleChoice(','<h4\x20style=\x22margin-top:\x2012px;\x22>💡\x20Giải\x20thích:</h4>','disabled','79tYzjkA','.option','#question-','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<table\x20class=\x22history-table\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<thead>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<tr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<th>Lần</th>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<th>Điểm</th>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<th>Thời\x20gian</th>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</tr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</thead>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<tbody>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','581819fJYtUh','-----END\x20PRIVATE\x20KEY-----','image','fillblank-','toString','correctAnswer','good','json','results','lessonSelector','floor','style','startBtn','option2','<p>','<div\x20class=\x22no-history\x22>Bạn\x20chưa\x20làm\x20bài\x20tập\x20buổi\x20này</div>','historySection','option4','application/x-www-form-urlencoded','option1','42NeJoXF','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22result-item\x20','vi-VN','getElementById','<div\x20class=\x22question-text\x22>','questionsContainer','remove','Nhiều\x20đáp\x20án','Khá\x20tốt!\x20Tiếp\x20tục\x20cố\x20gắng\x20nhé!','<div\x20class=\x22error\x22>Lỗi:\x20','option5','querySelectorAll','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22question-number\x22>Câu\x20','Bạn\x20có\x20chắc\x20chắn\x20muốn\x20nộp\x20bài?','Đúng','showAnswer','appendChild','classList','importKey','RSASSA-PKCS1-v1_5','Xuất\x20sắc!\x20Bạn\x20đã\x20làm\x20rất\x20tốt!','length','log','timestamp','Open-Ended','https://www.googleapis.com/oauth2/v1/certs','from','some','addEventListener','selected','sign','Điền\x20từ','</div>','<h3\x20style=\x22margin-bottom:\x2015px;\x22>Chi\x20tiết\x20kết\x20quả:</h3>','2048545UmiaLs','✗\x20Sai','%)\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<td>','Fill-in-the-Blank','https://www.googleapis.com/auth/spreadsheets','googleapis.com','Không\x20tìm\x20thấy\x20câu\x20hỏi\x20cho\x20buổi\x20này','isCorrect','total','display','1764936fSavQz','RS256','📝\x20Tự\x20luận','<br><small><strong>💡\x20Giải\x20thích:</strong>\x20','subtle','every','stringify','POST','open','https://sheets.googleapis.com/v4/spreadsheets/','</td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</tr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','baitap-video-thansok9@central-alcove-474302-c5.iam.gserviceaccount.com','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<tr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<td>Lần\x20','resultMessage','mahocvien','loadingMessage','<img\x20src=\x22','push','11533248GveqOu','29974yQBxOF','split','\x22\x20class=\x22question-image\x22\x20alt=\x22Question\x20image\x22>','includes','sessionSelect','JWT','needs-improvement','innerHTML','<h4>✅\x20Đáp\x20án\x20đúng:</h4>','access_token','https://www.googleapis.com/robot/v1/metadata/x509/baitap-video-thansok9%40central-alcove-474302-c5.iam.gserviceaccount.com','grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=','https://accounts.google.com/o/oauth2/auth','encode','smooth','KetQua','question','Sheet\x20không\x20có\x20dữ\x20liệu\x20câu\x20hỏi','message','error','1452918vHWMYZ','service_account','Không\x20thể\x20tải\x20lịch\x20sử','</p>','option',')\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','Trắc\x20nghiệm','Bắt\x20Đầu\x20Làm\x20Bài','join','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<textarea\x20class=\x22open-ended-input\x22\x20id=\x22openended-','openended-','pkcs8','scrollTo','Không\x20có\x20mã\x20học\x20viên,\x20không\x20lưu\x20kết\x20quả','Bài\x20Tập\x20Buổi\x20','map','score','quizContainer','<div\x20class=\x22options\x22>'];_0x2956=function(){return _0x52dbaf;};return _0x2956();}
+const _0x44f86e=_0x3bac;(function(_0x4b9d13,_0x1ebd36){const _0x18c79e=_0x3bac,_0x44b313=_0x4b9d13();while(!![]){try{const _0x5a5ccd=-parseInt(_0x18c79e(0x12e))/0x1+-parseInt(_0x18c79e(0xe6))/0x2+-parseInt(_0x18c79e(0x11a))/0x3*(parseInt(_0x18c79e(0xc6))/0x4)+-parseInt(_0x18c79e(0x113))/0x5*(parseInt(_0x18c79e(0x10c))/0x6)+parseInt(_0x18c79e(0xab))/0x7*(-parseInt(_0x18c79e(0x9b))/0x8)+parseInt(_0x18c79e(0x90))/0x9*(-parseInt(_0x18c79e(0x157))/0xa)+parseInt(_0x18c79e(0xce))/0xb;if(_0x5a5ccd===_0x1ebd36)break;else _0x44b313['push'](_0x44b313['shift']());}catch(_0x226235){_0x44b313['push'](_0x44b313['shift']());}}}(_0x5310,0xf34c8));const SPREADSHEET_ID=_0x44f86e(0x12a),SHEET_NAME=_0x44f86e(0xa7),RESULT_SHEET=_0x44f86e(0x158),SERVICE_ACCOUNT={'type':_0x44f86e(0xdc),'project_id':_0x44f86e(0xb9),'private_key_id':_0x44f86e(0xed),'private_key':_0x44f86e(0x101),'client_email':_0x44f86e(0xca),'client_id':_0x44f86e(0x15b),'auth_uri':_0x44f86e(0x10f),'token_uri':_0x44f86e(0x149),'auth_provider_x509_cert_url':_0x44f86e(0x136),'client_x509_cert_url':_0x44f86e(0x92),'universe_domain':_0x44f86e(0x13e)};let allQuestions=[],filteredQuestions=[],accessToken=null,sessionsData={},studentId='',selectedSession='',studentHistory=[],quizSubmitted=![];window[_0x44f86e(0x9d)](_0x44f86e(0xb5),function(){const _0x348dd8=_0x44f86e,_0x111e87=new URLSearchParams(window['location'][_0x348dd8(0x106)]);studentId=_0x111e87[_0x348dd8(0xc2)]('mahocvien')||'',studentId&&(document['getElementById']('studentInfo')[_0x348dd8(0x116)]=_0x348dd8(0x129)+studentId),loadAllData();});async function getAccessToken(){const _0x22d093=_0x44f86e;try{const _0x5b5940=btoa(JSON[_0x22d093(0x152)]({'alg':_0x22d093(0x156),'typ':'JWT'})),_0x4130f1=Math[_0x22d093(0xb7)](Date[_0x22d093(0xa0)]()/0x3e8),_0xeae29f=btoa(JSON['stringify']({'iss':SERVICE_ACCOUNT[_0x22d093(0xd1)],'scope':_0x22d093(0xfa),'aud':_0x22d093(0x149),'exp':_0x4130f1+0xe10,'iat':_0x4130f1})),_0x4bd41c=_0x5b5940+'.'+_0xeae29f,_0x27b52e=SERVICE_ACCOUNT[_0x22d093(0x14c)][_0x22d093(0x137)](_0x22d093(0xc3),'')[_0x22d093(0x137)](_0x22d093(0x110),'')[_0x22d093(0x137)](/\s/g,''),_0x12afbd=atob(_0x27b52e),_0x4a3106=new Uint8Array(_0x12afbd[_0x22d093(0xda)]);for(let _0x550b8e=0x0;_0x550b8e<_0x12afbd['length'];_0x550b8e++){_0x4a3106[_0x550b8e]=_0x12afbd[_0x22d093(0x13c)](_0x550b8e);}const _0x51c2c9=await crypto['subtle'][_0x22d093(0xd8)]('pkcs8',_0x4a3106,{'name':_0x22d093(0x128),'hash':_0x22d093(0x134)},![],['sign']),_0x4de82d=await crypto[_0x22d093(0xec)][_0x22d093(0x10e)](_0x22d093(0x128),_0x51c2c9,new TextEncoder()[_0x22d093(0xa8)](_0x4bd41c)),_0x2b8ba3=btoa(String[_0x22d093(0x15c)](...new Uint8Array(_0x4de82d)))[_0x22d093(0x137)](/\+/g,'-')[_0x22d093(0x137)](/\//g,'_')[_0x22d093(0x137)](/=+$/,''),_0x177b6e=_0x4bd41c+'.'+_0x2b8ba3,_0x113732=await fetch(_0x22d093(0x149),{'method':_0x22d093(0x111),'headers':{'Content-Type':_0x22d093(0xa4)},'body':_0x22d093(0x120)+_0x177b6e}),_0x214caf=await _0x113732[_0x22d093(0x12d)]();return _0x214caf[_0x22d093(0x9a)];}catch(_0x224374){console[_0x22d093(0xb2)](_0x22d093(0xb8),_0x224374);throw _0x224374;}}function _0x3bac(_0x2e0bf8,_0x3e3163){const _0x5310ec=_0x5310();return _0x3bac=function(_0x3bac78,_0x2b649c){_0x3bac78=_0x3bac78-0x90;let _0x1800c4=_0x5310ec[_0x3bac78];return _0x1800c4;},_0x3bac(_0x2e0bf8,_0x3e3163);}async function loadAllData(){const _0x16a1e8=_0x44f86e;try{const _0xeb1d92=document[_0x16a1e8(0xc4)](_0x16a1e8(0xb4));_0xeb1d92[_0x16a1e8(0x15a)]=_0x16a1e8(0x160),accessToken=await getAccessToken();const _0x1ae091=_0x16a1e8(0x155)+SPREADSHEET_ID+_0x16a1e8(0x144)+SHEET_NAME,_0x244c57=await fetch(_0x1ae091,{'headers':{'Authorization':_0x16a1e8(0xe2)+accessToken}});if(!_0x244c57['ok'])throw new Error(_0x16a1e8(0xdb));const _0x20ceb3=await _0x244c57[_0x16a1e8(0x12d)](),_0x5b55c2=_0x20ceb3[_0x16a1e8(0xf6)];if(!_0x5b55c2||_0x5b55c2[_0x16a1e8(0xda)]<0x2)throw new Error(_0x16a1e8(0xd0));allQuestions=[],sessionsData={};for(let _0x3159dd=0x1;_0x3159dd<_0x5b55c2[_0x16a1e8(0xda)];_0x3159dd++){const _0x3c084e=_0x5b55c2[_0x3159dd];if(_0x3c084e[0x2]&&_0x3c084e[0x0]){const _0x244625=_0x3c084e[0x0],_0x5e6ea2=_0x3c084e[0x1]||'',_0x41d70d={'session':_0x244625,'lesson':_0x5e6ea2,'text':_0x3c084e[0x2],'type':_0x3c084e[0x3]||'Multiple\x20Choice','option1':_0x3c084e[0x4]||'','option2':_0x3c084e[0x5]||'','option3':_0x3c084e[0x6]||'','option4':_0x3c084e[0x7]||'','option5':_0x3c084e[0x8]||'','correctAnswer':_0x3c084e[0x9]||'','image':_0x3c084e[0xa]||'','explanation':_0x3c084e[0xb]||'','showAnswer':(_0x3c084e[0xc]||'')[_0x16a1e8(0xdd)]()===_0x16a1e8(0xfe),'timeShowAnswer':_0x3c084e[0xd]||''};allQuestions[_0x16a1e8(0x115)](_0x41d70d),!sessionsData[_0x244625]&&(sessionsData[_0x244625]=!![]);}}if(allQuestions[_0x16a1e8(0xda)]===0x0)throw new Error(_0x16a1e8(0xaa));populateSessions(),_0xeb1d92[_0x16a1e8(0x15a)]='',studentId&&await loadStudentHistory();}catch(_0x234e61){document['getElementById']('loadingMessage')[_0x16a1e8(0x15a)]='<div\x20class=\x22error\x22>Lỗi:\x20'+_0x234e61[_0x16a1e8(0x10d)]+_0x16a1e8(0xba);}}async function loadStudentHistory(){const _0x3a9896=_0x44f86e;try{const _0x3f3fea=_0x3a9896(0x155)+SPREADSHEET_ID+_0x3a9896(0x144)+RESULT_SHEET,_0x4af4c1=await fetch(_0x3f3fea,{'headers':{'Authorization':_0x3a9896(0xe2)+accessToken}});if(!_0x4af4c1['ok']){console[_0x3a9896(0x95)](_0x3a9896(0x12f));return;}const _0x48d591=await _0x4af4c1[_0x3a9896(0x12d)](),_0x1a5dd6=_0x48d591[_0x3a9896(0xf6)];if(!_0x1a5dd6||_0x1a5dd6[_0x3a9896(0xda)]<0x2)return;studentHistory=[];for(let _0x4117ab=0x1;_0x4117ab<_0x1a5dd6['length'];_0x4117ab++){const _0x26c028=_0x1a5dd6[_0x4117ab];_0x26c028[0x0]===studentId&&studentHistory[_0x3a9896(0x115)]({'session':_0x26c028[0x1],'score':_0x26c028[0x2],'total':_0x26c028[0x3],'percentage':_0x26c028[0x4],'timestamp':_0x26c028[0x5],'details':_0x26c028[0x6]||''});}}catch(_0x339a09){console['error'](_0x3a9896(0xf0),_0x339a09);}}function populateSessions(){const _0x4e91e8=_0x44f86e,_0x2665ec=document[_0x4e91e8(0xc4)](_0x4e91e8(0x143));_0x2665ec[_0x4e91e8(0x15a)]=_0x4e91e8(0x109);const _0x526d85=Object[_0x4e91e8(0xb0)](sessionsData)[_0x4e91e8(0x14f)]((_0x345b9c,_0x29fe95)=>{const _0x5ca745=parseInt(_0x345b9c)||0x0,_0x37a9bd=parseInt(_0x29fe95)||0x0;return _0x5ca745-_0x37a9bd;});_0x526d85['forEach'](_0x65f0f1=>{const _0x36a609=_0x4e91e8,_0x544113=document[_0x36a609(0x114)](_0x36a609(0x104));_0x544113[_0x36a609(0x15f)]=_0x65f0f1,_0x544113[_0x36a609(0x116)]=_0x36a609(0xe9)+_0x65f0f1,_0x2665ec[_0x36a609(0xd5)](_0x544113);});}function checkSessionHistory(){const _0x285789=_0x44f86e,_0xabaf62=document[_0x285789(0xc4)](_0x285789(0x143)),_0x3a81b9=_0xabaf62[_0x285789(0x15f)],_0x2b5246=document['getElementById']('startBtn'),_0xb30601=document['getElementById'](_0x285789(0xa3)),_0x59362a=document[_0x285789(0xc4)]('historyContent');_0x2b5246[_0x285789(0x142)]=!_0x3a81b9;if(!_0x3a81b9||!studentId){_0xb30601[_0x285789(0x150)][_0x285789(0xf5)]=_0x285789(0x127);return;}const _0x36f95a=studentHistory[_0x285789(0xfd)](_0x50c53a=>_0x50c53a['session']==_0x3a81b9);if(_0x36f95a[_0x285789(0xda)]===0x0)_0xb30601[_0x285789(0x150)][_0x285789(0xf5)]='block',_0x59362a[_0x285789(0x15a)]=_0x285789(0x11e),_0x2b5246[_0x285789(0x116)]=_0x285789(0xa9);else{_0xb30601[_0x285789(0x150)][_0x285789(0xf5)]='block';let _0x29c4d7=_0x285789(0xf3);_0x36f95a['forEach']((_0x17858a,_0x55eea0)=>{const _0x1df575=_0x285789,_0x55eef5=parseInt(_0x17858a[_0x1df575(0xd6)]);let _0x32bfe5=_0x1df575(0xe8);if(_0x55eef5>=0x50)_0x32bfe5=_0x1df575(0x125);else{if(_0x55eef5>=0x3c)_0x32bfe5=_0x1df575(0x130);}_0x29c4d7+='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<tr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<td>Lần\x20'+(_0x55eea0+0x1)+_0x1df575(0xa1)+_0x32bfe5+_0x1df575(0x14d)+_0x17858a[_0x1df575(0x159)]+'/'+_0x17858a[_0x1df575(0xb6)]+'\x20('+_0x17858a['percentage']+_0x1df575(0xbb)+_0x17858a[_0x1df575(0x96)]+'</td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</tr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20';}),_0x29c4d7+='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</tbody>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</table>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<p\x20style=\x22margin-top:\x2015px;\x20color:\x20#6c757d;\x20font-size:\x2014px;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20💡\x20Bạn\x20đã\x20làm\x20bài\x20này\x20'+_0x36f95a[_0x285789(0xda)]+_0x285789(0xf2),_0x59362a['innerHTML']=_0x29c4d7,_0x2b5246[_0x285789(0x116)]='Làm\x20Lại\x20Bài\x20Tập';}}function startQuiz(){const _0x5a594d=_0x44f86e,_0x29c114=document[_0x5a594d(0xc4)](_0x5a594d(0x143));selectedSession=_0x29c114[_0x5a594d(0x15f)];if(!selectedSession){alert(_0x5a594d(0xf8));return;}filteredQuestions=allQuestions[_0x5a594d(0xfd)](_0x565789=>_0x565789['session']==selectedSession);if(filteredQuestions[_0x5a594d(0xda)]===0x0){alert(_0x5a594d(0x93));return;}document[_0x5a594d(0xc4)](_0x5a594d(0xe1))[_0x5a594d(0x150)][_0x5a594d(0xf5)]='none',document[_0x5a594d(0xc4)](_0x5a594d(0xa3))['style'][_0x5a594d(0xf5)]=_0x5a594d(0x127),document['getElementById'](_0x5a594d(0xff))[_0x5a594d(0x150)][_0x5a594d(0xf5)]=_0x5a594d(0x151),document[_0x5a594d(0xc4)]('quizTitle')[_0x5a594d(0x116)]=_0x5a594d(0x131)+selectedSession,quizSubmitted=![],displayAllQuestions();}function _0x5310(){const _0x299ee4=['2285895RBcaVA','<h3\x20style=\x22margin-bottom:\x2015px;\x22>Chi\x20tiết\x20kết\x20quả:</h3>','</small>','.option.selected','<div\x20class=\x22no-history\x22>Bạn\x20chưa\x20làm\x20bài\x20tập\x20buổi\x20này</div>','questionIndex','grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=','.option','option5','<div\x20class=\x22answer-reveal\x22\x20id=\x22answer-','explanation','excellent','<p>','none','RSASSA-PKCS1-v1_5','Mã\x20học\x20viên:\x20','1L19bXVPmGluBNM6ifvrqduwzO4nLz2kkrU-IPgBbOgs','round','<br><small><strong>✅\x20Đáp\x20án\x20đúng:</strong>\x20','json','466186etuUQN','Không\x20thể\x20tải\x20lịch\x20sử','good','Bài\x20Tập\x20Buổi\x20','<h4\x20style=\x22color:\x20#856404;\x22>🔒\x20Đáp\x20án\x20sẽ\x20được\x20công\x20bố</h4>','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22option\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20type=\x22checkbox\x22\x20id=\x22q','SHA-256','Câu\x20','https://www.googleapis.com/oauth2/v1/certs','replace','Cần\x20cố\x20gắng\x20thêm!\x20Đừng\x20bỏ\x20cuộc!','open','<h4>✅\x20Các\x20đáp\x20án\x20đúng:</h4>','results','charCodeAt','option1','googleapis.com','selected','isCorrect','Checkbox','disabled','sessionSelect','/values/','Bạn\x20có\x20chắc\x20chắn\x20muốn\x20nộp\x20bài?','Điền\x20từ','application/json','type','https://oauth2.googleapis.com/token','trim','correct','private_key','\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','</small>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','sort','style','block','stringify','<img\x20src=\x22','<h4\x20style=\x22margin-top:\x2012px;\x22>💡\x20Giải\x20thích:</h4>','https://sheets.googleapis.com/v4/spreadsheets/','RS256','940iqbaAI','KetQua','score','innerHTML','116668401870672475358','fromCharCode','\x22\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20placeholder=\x22Nhập\x20câu\x20trả\x20lời\x20của\x20bạn...\x22></textarea>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','image','value','<div\x20class=\x22loading\x22>Đang\x20tải\x20dữ\x20liệu...</div>','59112KReePh','map','https://www.googleapis.com/robot/v1/metadata/x509/baitap-video-thansok9%40central-alcove-474302-c5.iam.gserviceaccount.com','Không\x20tìm\x20thấy\x20câu\x20hỏi\x20cho\x20buổi\x20này','classList','log','timestamp','Đã\x20lưu\x20kết\x20quả\x20thành\x20công','includes','toString','access_token','264zLxSHq','<br><small\x20style=\x22color:\x20#856404;\x22><strong>🔒\x20Đáp\x20án\x20sẽ\x20được\x20công\x20bố\x20vào:</strong>\x20','addEventListener','📝\x20Tự\x20luận','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22option\x22\x20onclick=\x22selectMultipleChoice(','now','</td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22score-badge\x20','remove','historySection','application/x-www-form-urlencoded','openended-','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<br>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<small>','BaiTap','encode','Bắt\x20Đầu\x20Làm\x20Bài','Không\x20tìm\x20thấy\x20câu\x20hỏi\x20nào','952IAWypi','join','resultMessage','</label>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','\x22\x20value=\x22','keys','timeShowAnswer','error','indexOf','loadingMessage','DOMContentLoaded','total','floor','Error\x20getting\x20access\x20token:','central-alcove-474302-c5','</div>','%)\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</td>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<td>','className','Open-Ended','<h4>✅\x20Đáp\x20án\x20đúng:</h4>','</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20',':\x20Tự\x20luận','correctAnswer','get','-----BEGIN\x20PRIVATE\x20KEY-----','getElementById','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','4JUnKhk','Trắc\x20nghiệm','from','<div\x20class=\x22options\x22>','baitap-video-thansok9@central-alcove-474302-c5.iam.gserviceaccount.com','resultDetails','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<textarea\x20class=\x22open-ended-input\x22\x20id=\x22openended-','<p\x20style=\x22color:\x20#856404;\x22>Đáp\x20án\x20sẽ\x20hiển\x20thị\x20vào:\x20','50582961POGmFp','\x20hoặc\x20','Sheet\x20không\x20có\x20dữ\x20liệu\x20câu\x20hỏi','client_email','finalScore','Fill-in-the-Blank','option2','appendChild','percentage','\x22\x20class=\x22question-image\x22\x20alt=\x22Question\x20image\x22>','importKey','querySelectorAll','length','Không\x20thể\x20tải\x20dữ\x20liệu\x20từ\x20Google\x20Sheets','service_account','toLowerCase','split','forEach','Lỗi\x20khi\x20lưu\x20kết\x20quả:','lessonSelector','Bearer\x20','smooth','Tự\x20luận','question-card','1786854slDdiK','showAnswer','needs-improvement','Buổi\x20','some','_opt','subtle','9ce900c7ffbc2dbaeb1632791b9f3890d98c9d13','\x22\x20style=\x22background:\x20#fff3cd;\x20border-left-color:\x20#ffc107;\x22>','text','Lỗi\x20khi\x20tải\x20lịch\x20sử:','<br><small><strong>💡\x20Giải\x20thích:</strong>\x20','\x20ần.\x20Bạn\x20có\x20thể\x20làm\x20lại\x20để\x20cải\x20thiện\x20điểm\x20số.\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</p>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<table\x20class=\x22history-table\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<thead>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<tr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<th>Lần</th>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<th>Điểm</th>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<th>Thời\x20gian</th>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</tr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</thead>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<tbody>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<input\x20type=\x22text\x22\x20class=\x22fill-blank-input\x22\x20id=\x22fillblank-','display','values','</p>','Vui\x20lòng\x20chọn\x20buổi\x20học','\x22\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20placeholder=\x22Nhập\x20câu\x20trả\x20lời\x20của\x20bạn...\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','https://www.googleapis.com/auth/spreadsheets\x20https://www.googleapis.com/auth/drive.file',')\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','option3','filter','yes','quizContainer','questionsContainer','-----BEGIN\x20PRIVATE\x20KEY-----\x0aMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDewrtEHzufVPzh\x0as1RSKdpkta6TbKssaZKL9qMyiAPbB61lFjEvIQmdld3IPgF7wNJvfQy6taq3Z2tL\x0aHzFgkaQSfxsfW9pL3a24WmllCWCb3GpJVmAYdVLUFIYxv6q0cCmOFd0G2HXE8e3N\x0aA7Cqbtge7dgeeiNXPgUws0mGLWQu8esgQByEUsdNWKV1uZSwYKkd9Qmyws6MgmVG\x0aeuGQGNKIvcRS2JdvNjKCvYe/+EqBopkVIrTo9euP77/TLmi6Zh9zs+qfLgA4dW0e\x0a4cGDa3XuMT9aIhYwO58prkqnaHfYRhLJ9kU//zEcoDv+fpVmIDECMXdVqJ1JS4ue\x0aA60D8Hu9AgMBAAECggEAPSxx+9+t4nAW8C5sqhGnUX/ZPNAbY9tsLLajE5XppSVD\x0aF18US7KBbv7AhKSOiLsnrwlCzSVlh+9FNkCPMUtdqNyyCJcTaEEs21Ms3VvJZZQO\x0atiwbwKu7ftVSEuhlSx8AMm5Ln/0ivl6H5QSt5+f/vuKnNptpCCTWjQy3VLszZ3Zx\x0a32zRrkBWjfkNGBLNv8mC99YXWZw9BGBDUACtBs+AuXrn1+LLYMQYtTiSbPkVP7pv\x0aeeDvgFq2K6JF6Ko4lnJil1zpkI4tdFLU4w2ETeLQWhNVudgl6/LwWKMrUiY7LNr4\x0avQS6wmMyuebquof4kD3qe2OWiAdx30tlHNSWRkrpWwKBgQD0ShBu4hgI1x5hyIa9\x0a+NxFtIm4MWhSP8pyujg26NlrCQ1hoYSFL+wpwoeiQEa0fttiVyt6T+E89WxnOeB+\x0afRvSMkREZf5HEh+L5eQbUhIabSqfAfx9U+J4s6mlvZPwQJoCnNGs4/QbpDn0omCA\x0a/KImMFe4olRLk/8XuW1WB5IbiwKBgQDpcHdd4Kxl6WnkpJZYvSy2vxVmzZuuKwga\x0a8Nqm2TlWUPJJ6scpoYWZL5ijhr3djAoAKpyF3HcDeXTzWhVDdyXGA/krfYe+EG7p\x0aT4tuUHvwsGAmLzJ6/uL229A6hq3/sXkEsMC3S6aICaXb6whD/S63xHUd8a51ldhb\x0aKwXMkmVO1wKBgG3AqMloguvV2iyMbx0CpdQbXJSIfhoV1trcl0z0KFpSYtSuQF+m\x0aPDA22cEnp5yIMgBosXvuT3+Xs/BcrGOnycwSEWG5gRhlKA8uZeFwafm9ehyeQ9X6\x0azhD0hw+TsNeL7qWl1v4aHB4fFnq2SS0qU59csMyfAchC4aTDBkBUfmwpAoGAHr1W\x0amqAZU5o2/YrG2YyftLjY4p60n2y/Nnz87few2zLxlNY7v7mrVA62dOIrYl8sefUi\x0ag2YSrfxycBEut6Ga8cZYK2fuVhLn6AU3gSFMENfI8X5JkXS7AnLTqsFNbFw8aWe1\x0aGO33UfajRqBeiEVwv3Y5TeYjaQyAXxD9RIEKoiUCgYB9ZQHvflIWZ5DLFDwBQsyT\x0aavARdoc8pbvNqOo0jFfnHxfmYp9CyzcyvxUZWbzzXrnDQlpUaz66d1zrvXAaywSd\x0a9kjibOVMwKjtMnQI9r29dvmvUICKGhWep3xZHEPGyXR28jrUyXZaUVgrhkUx6CKw\x0aH+yNkqSz9nmGA0+5MfoP5Q==\x0a-----END\x20PRIVATE\x20KEY-----\x0a','option4','Multiple\x20Choice','option','question-','search','</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22question-type-badge\x22>','Xuất\x20sắc!\x20Bạn\x20đã\x20làm\x20rất\x20tốt!','<option\x20value=\x22\x22>--\x20Chọn\x20buổi\x20học\x20--</option>','<div\x20class=\x22question-text\x22>','vi-VN','6SGkkod','message','sign','https://accounts.google.com/o/oauth2/auth','-----END\x20PRIVATE\x20KEY-----','POST','\x20input[type=\x22checkbox\x22]:checked','4292205DTOEBX','createElement','push','textContent','add',':</strong>\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','startBtn'];_0x5310=function(){return _0x299ee4;};return _0x5310();}function displayAllQuestions(){const _0x5bb167=_0x44f86e,_0x136461=document[_0x5bb167(0xc4)](_0x5bb167(0x100));_0x136461['innerHTML']='',filteredQuestions[_0x5bb167(0xdf)]((_0x590f74,_0x1a54da)=>{const _0x17cd5b=_0x5bb167,_0x4c7f7a=document['createElement']('div');_0x4c7f7a[_0x17cd5b(0xbc)]=_0x17cd5b(0xe5),_0x4c7f7a['id']=_0x17cd5b(0x105)+_0x1a54da;let _0x2ea67b='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22question-number\x22>Câu\x20'+(_0x1a54da+0x1)+_0x17cd5b(0x107)+getTypeLabel(_0x590f74['type'])+_0x17cd5b(0xbf);_0x590f74[_0x17cd5b(0x15e)]&&(_0x2ea67b+=_0x17cd5b(0x153)+_0x590f74[_0x17cd5b(0x15e)]+_0x17cd5b(0xd7));_0x2ea67b+=_0x17cd5b(0x10a)+_0x590f74[_0x17cd5b(0xef)]+_0x17cd5b(0xba),_0x2ea67b+=_0x17cd5b(0xc9);if(_0x590f74[_0x17cd5b(0x148)]===_0x17cd5b(0x103)){const _0x4edcac=[_0x590f74['option1'],_0x590f74['option2'],_0x590f74[_0x17cd5b(0xfc)],_0x590f74[_0x17cd5b(0x102)],_0x590f74[_0x17cd5b(0x122)]][_0x17cd5b(0xfd)](_0x3ca3a0=>_0x3ca3a0);_0x4edcac[_0x17cd5b(0xdf)]((_0x87eb33,_0x1038a0)=>{const _0x564c2e=_0x17cd5b;_0x2ea67b+=_0x564c2e(0x9f)+_0x1a54da+',\x20'+_0x1038a0+_0x564c2e(0xfb)+_0x87eb33+_0x564c2e(0xc5);});}else{if(_0x590f74[_0x17cd5b(0x148)]===_0x17cd5b(0x141)){const _0x46c980=[_0x590f74[_0x17cd5b(0x13d)],_0x590f74[_0x17cd5b(0xd4)],_0x590f74[_0x17cd5b(0xfc)],_0x590f74[_0x17cd5b(0x102)],_0x590f74['option5']][_0x17cd5b(0xfd)](_0x3ffc82=>_0x3ffc82);_0x46c980[_0x17cd5b(0xdf)]((_0x1f6814,_0x45f51d)=>{const _0x3ac907=_0x17cd5b;_0x2ea67b+=_0x3ac907(0x133)+_0x1a54da+'_opt'+_0x45f51d+_0x3ac907(0xaf)+(_0x45f51d+0x1)+'\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<label\x20for=\x22q'+_0x1a54da+_0x3ac907(0xeb)+_0x45f51d+'\x22>'+_0x1f6814+_0x3ac907(0xae);});}else{if(_0x590f74[_0x17cd5b(0x148)]===_0x17cd5b(0xd3))_0x2ea67b+=_0x17cd5b(0xf4)+_0x1a54da+_0x17cd5b(0xf9);else _0x590f74['type']===_0x17cd5b(0xbd)&&(_0x2ea67b+=_0x17cd5b(0xcc)+_0x1a54da+_0x17cd5b(0x15d));}}_0x2ea67b+=_0x17cd5b(0xba);if(quizSubmitted){let _0x154676=![];if(_0x590f74['showAnswer']){if(_0x590f74[_0x17cd5b(0xb1)])try{const _0x479d3f=new Date(_0x590f74[_0x17cd5b(0xb1)]),_0x4994e8=new Date();_0x154676=_0x4994e8>=_0x479d3f;}catch(_0x58e799){_0x154676=!![];}else _0x154676=!![];}if(_0x154676){_0x2ea67b+=_0x17cd5b(0x123)+_0x1a54da+'\x22>';if(_0x590f74[_0x17cd5b(0x148)]===_0x17cd5b(0x103)&&_0x590f74[_0x17cd5b(0xc1)]){const _0xb71359=parseInt(_0x590f74[_0x17cd5b(0xc1)])-0x1,_0x4abe33=[_0x590f74[_0x17cd5b(0x13d)],_0x590f74[_0x17cd5b(0xd4)],_0x590f74[_0x17cd5b(0xfc)],_0x590f74['option4'],_0x590f74[_0x17cd5b(0x122)]][_0x17cd5b(0xfd)](_0x5a7284=>_0x5a7284);_0x4abe33[_0xb71359]&&(_0x2ea67b+=_0x17cd5b(0xbe),_0x2ea67b+=_0x17cd5b(0x126)+_0x4abe33[_0xb71359]+'</p>');}else{if(_0x590f74['type']==='Checkbox'&&_0x590f74['correctAnswer']){const _0x873ac8=_0x590f74['correctAnswer'][_0x17cd5b(0xde)](',')[_0x17cd5b(0x91)](_0x1042f7=>parseInt(_0x1042f7['trim']())-0x1),_0x36c5ce=[_0x590f74[_0x17cd5b(0x13d)],_0x590f74[_0x17cd5b(0xd4)],_0x590f74['option3'],_0x590f74[_0x17cd5b(0x102)],_0x590f74[_0x17cd5b(0x122)]][_0x17cd5b(0xfd)](_0x2ffe95=>_0x2ffe95),_0x32a465=_0x873ac8['map'](_0x2c0a8f=>_0x36c5ce[_0x2c0a8f])[_0x17cd5b(0xfd)](_0x2b7604=>_0x2b7604);_0x32a465[_0x17cd5b(0xda)]>0x0&&(_0x2ea67b+=_0x17cd5b(0x13a),_0x2ea67b+=_0x17cd5b(0x126)+_0x32a465[_0x17cd5b(0xac)](',\x20')+_0x17cd5b(0xf7));}else{if(_0x590f74['type']===_0x17cd5b(0xd3)){const _0x4d097f=[_0x590f74[_0x17cd5b(0x13d)],_0x590f74[_0x17cd5b(0xd4)],_0x590f74['option3'],_0x590f74[_0x17cd5b(0x102)],_0x590f74[_0x17cd5b(0x122)]][_0x17cd5b(0xfd)](_0x676918=>_0x676918);_0x4d097f[_0x17cd5b(0xda)]>0x0&&(_0x2ea67b+=_0x17cd5b(0xbe),_0x2ea67b+=_0x17cd5b(0x126)+_0x4d097f[_0x17cd5b(0xac)](_0x17cd5b(0xcf))+_0x17cd5b(0xf7));}}}_0x590f74[_0x17cd5b(0x124)]&&(_0x2ea67b+=_0x17cd5b(0x154),_0x2ea67b+='<p>'+_0x590f74[_0x17cd5b(0x124)]+_0x17cd5b(0xf7)),_0x2ea67b+=_0x17cd5b(0xba);}else{if(_0x590f74[_0x17cd5b(0xe7)]&&_0x590f74[_0x17cd5b(0xb1)]){const _0x4b3f7c=new Date(_0x590f74['timeShowAnswer']);_0x2ea67b+='<div\x20class=\x22answer-reveal\x22\x20id=\x22answer-'+_0x1a54da+_0x17cd5b(0xee),_0x2ea67b+=_0x17cd5b(0x132),_0x2ea67b+=_0x17cd5b(0xcd)+_0x4b3f7c['toLocaleString'](_0x17cd5b(0x10b))+_0x17cd5b(0xf7),_0x2ea67b+='</div>';}}}_0x4c7f7a[_0x17cd5b(0x15a)]=_0x2ea67b,_0x136461[_0x17cd5b(0xd5)](_0x4c7f7a);});}function getTypeLabel(_0x7f4da3){const _0x414f0d=_0x44f86e,_0x1f66da={'Multiple\x20Choice':_0x414f0d(0xc7),'Checkbox':'Nhiều\x20đáp\x20án','Fill-in-the-Blank':_0x414f0d(0x146),'Open-Ended':_0x414f0d(0xe4)};return _0x1f66da[_0x7f4da3]||_0x7f4da3;}function selectMultipleChoice(_0x1dcd23,_0x1f4cc6){const _0x2bab69=_0x44f86e,_0xb7cff6=document[_0x2bab69(0xc4)]('question-'+_0x1dcd23),_0x8b2ad=_0xb7cff6[_0x2bab69(0xd9)](_0x2bab69(0x121));_0x8b2ad['forEach'](_0x11859e=>_0x11859e[_0x2bab69(0x94)][_0x2bab69(0xa2)](_0x2bab69(0x13f))),_0x8b2ad[_0x1f4cc6][_0x2bab69(0x94)][_0x2bab69(0x117)](_0x2bab69(0x13f));}function submitAllAnswers(){const _0x58199d=_0x44f86e;if(!confirm(_0x58199d(0x145)))return;quizSubmitted=!![];const _0x2d5e91=[];let _0x11369b=0x0;filteredQuestions[_0x58199d(0xdf)]((_0x365890,_0xc9d823)=>{const _0x158e53=_0x58199d;let _0x208311='',_0x584674=![];if(_0x365890[_0x158e53(0x148)]==='Multiple\x20Choice'){const _0xb9b043=document[_0x158e53(0xc4)](_0x158e53(0x105)+_0xc9d823),_0x6c415c=_0xb9b043['querySelector'](_0x158e53(0x11d));if(_0x6c415c){const _0x2ee438=_0xb9b043[_0x158e53(0xd9)](_0x158e53(0x121)),_0x136350=Array[_0x158e53(0xc8)](_0x2ee438)[_0x158e53(0xb3)](_0x6c415c)+0x1;_0x208311=_0x136350[_0x158e53(0x99)](),_0x584674=_0x208311===_0x365890['correctAnswer'];}}else{if(_0x365890[_0x158e53(0x148)]===_0x158e53(0x141)){const _0x3f06ba=Array[_0x158e53(0xc8)](document[_0x158e53(0xd9)]('#question-'+_0xc9d823+_0x158e53(0x112)))[_0x158e53(0x91)](_0x252cbe=>_0x252cbe[_0x158e53(0x15f)]);_0x208311=_0x3f06ba[_0x158e53(0xac)](',');const _0x525834=_0x365890[_0x158e53(0xc1)][_0x158e53(0xde)](',')[_0x158e53(0x91)](_0x557065=>_0x557065[_0x158e53(0x14a)]());_0x584674=_0x3f06ba[_0x158e53(0xda)]===_0x525834[_0x158e53(0xda)]&&_0x3f06ba['every'](_0x198546=>_0x525834[_0x158e53(0x98)](_0x198546));}else{if(_0x365890[_0x158e53(0x148)]===_0x158e53(0xd3)){const _0x443ef3=document[_0x158e53(0xc4)]('fillblank-'+_0xc9d823);_0x208311=_0x443ef3[_0x158e53(0x15f)][_0x158e53(0x14a)]();const _0x1ea915=_0x208311[_0x158e53(0xdd)]()[_0x158e53(0x137)](/\s+/g,'\x20'),_0x130688=[_0x365890[_0x158e53(0x13d)],_0x365890[_0x158e53(0xd4)],_0x365890[_0x158e53(0xfc)],_0x365890[_0x158e53(0x102)],_0x365890[_0x158e53(0x122)]][_0x158e53(0xfd)](_0x160616=>_0x160616)[_0x158e53(0x91)](_0x435965=>_0x435965['toLowerCase']()[_0x158e53(0x137)](/\s+/g,'\x20'));_0x584674=_0x130688[_0x158e53(0xea)](_0x50d974=>_0x1ea915===_0x50d974);}else{if(_0x365890['type']==='Open-Ended'){const _0x185791=document[_0x158e53(0xc4)](_0x158e53(0xa5)+_0xc9d823);_0x208311=_0x185791[_0x158e53(0x15f)],_0x584674=!![];}}}}_0x584674&&_0x365890['type']!=='Open-Ended'&&_0x11369b++,_0x2d5e91[_0x158e53(0x115)]({'questionIndex':_0xc9d823+0x1,'question':_0x365890[_0x158e53(0xef)],'userAnswer':_0x208311,'correctAnswer':_0x365890[_0x158e53(0xc1)],'isCorrect':_0x584674,'type':_0x365890[_0x158e53(0x148)],'explanation':_0x365890[_0x158e53(0x124)]});}),displayAllQuestions(),window['scrollTo']({'top':0x0,'behavior':_0x58199d(0xe3)}),setTimeout(()=>{showResults(_0x11369b,_0x2d5e91);},0x3e8);}function showResults(_0x3431eb,_0x58dfb4){const _0x45cf27=_0x44f86e;document[_0x45cf27(0xc4)](_0x45cf27(0xff))[_0x45cf27(0x150)][_0x45cf27(0xf5)]=_0x45cf27(0x127),document[_0x45cf27(0xc4)](_0x45cf27(0x13b))[_0x45cf27(0x150)][_0x45cf27(0xf5)]='block';const _0x2dc609=filteredQuestions[_0x45cf27(0xfd)](_0x446bc7=>_0x446bc7[_0x45cf27(0x148)]!==_0x45cf27(0xbd))[_0x45cf27(0xda)],_0x442759=_0x2dc609>0x0?Math[_0x45cf27(0x12b)](_0x3431eb/_0x2dc609*0x64):0x0;document[_0x45cf27(0xc4)](_0x45cf27(0xd2))[_0x45cf27(0x116)]=_0x3431eb+'/'+_0x2dc609+'\x20('+_0x442759+'%)';let _0xdf4587='';if(_0x442759>=0x50)_0xdf4587=_0x45cf27(0x108);else _0x442759>=0x3c?_0xdf4587='Khá\x20tốt!\x20Tiếp\x20tục\x20cố\x20gắng\x20nhé!':_0xdf4587=_0x45cf27(0x138);document['getElementById'](_0x45cf27(0xad))[_0x45cf27(0x116)]=_0xdf4587;const _0x5ee97e=document[_0x45cf27(0xc4)](_0x45cf27(0xcb));_0x5ee97e[_0x45cf27(0x15a)]=_0x45cf27(0x11b),_0x58dfb4['forEach'](_0x36af98=>{const _0x84fd29=_0x45cf27;let _0x3240ab=_0x84fd29(0x139);_0x36af98[_0x84fd29(0x148)]!==_0x84fd29(0xbd)&&(_0x3240ab=_0x36af98[_0x84fd29(0x140)]?_0x84fd29(0x14b):'incorrect');let _0x363131='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22result-item\x20'+_0x3240ab+'\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<strong>Câu\x20'+_0x36af98[_0x84fd29(0x11f)]+_0x84fd29(0x118)+(_0x36af98[_0x84fd29(0x140)]?'✓\x20Đúng':_0x36af98[_0x84fd29(0x148)]==='Open-Ended'?_0x84fd29(0x9e):'✗\x20Sai')+_0x84fd29(0xa6)+_0x36af98['question']+_0x84fd29(0x14e);const _0x6c062f=filteredQuestions[_0x36af98[_0x84fd29(0x11f)]-0x1];let _0x2ba4e7=![];if(_0x6c062f[_0x84fd29(0xe7)]){if(_0x6c062f[_0x84fd29(0xb1)])try{const _0x1cda2a=new Date(_0x6c062f[_0x84fd29(0xb1)]),_0x29a8e5=new Date();_0x2ba4e7=_0x29a8e5>=_0x1cda2a;}catch(_0x5f13f3){_0x2ba4e7=!![];}else _0x2ba4e7=!![];}if(!_0x36af98['isCorrect']&&_0x36af98[_0x84fd29(0x148)]!==_0x84fd29(0xbd)&&_0x2ba4e7){if(_0x6c062f[_0x84fd29(0x148)]===_0x84fd29(0x103)&&_0x6c062f[_0x84fd29(0xc1)]){const _0x1792c5=parseInt(_0x6c062f[_0x84fd29(0xc1)])-0x1,_0xa0ee9b=[_0x6c062f[_0x84fd29(0x13d)],_0x6c062f[_0x84fd29(0xd4)],_0x6c062f[_0x84fd29(0xfc)],_0x6c062f[_0x84fd29(0x102)],_0x6c062f[_0x84fd29(0x122)]]['filter'](_0x2e86f0=>_0x2e86f0);_0xa0ee9b[_0x1792c5]&&(_0x363131+='<br><small><strong>✅\x20Đáp\x20án\x20đúng:</strong>\x20'+_0xa0ee9b[_0x1792c5]+_0x84fd29(0x11c));}else{if(_0x6c062f['type']===_0x84fd29(0x141)&&_0x6c062f[_0x84fd29(0xc1)]){const _0x27ccd4=_0x6c062f[_0x84fd29(0xc1)]['split'](',')[_0x84fd29(0x91)](_0x5752b2=>parseInt(_0x5752b2['trim']())-0x1),_0x5a3803=[_0x6c062f[_0x84fd29(0x13d)],_0x6c062f[_0x84fd29(0xd4)],_0x6c062f['option3'],_0x6c062f[_0x84fd29(0x102)],_0x6c062f[_0x84fd29(0x122)]][_0x84fd29(0xfd)](_0x47b259=>_0x47b259),_0x402528=_0x27ccd4['map'](_0x4653c5=>_0x5a3803[_0x4653c5])[_0x84fd29(0xfd)](_0x1282c1=>_0x1282c1);_0x402528['length']>0x0&&(_0x363131+='<br><small><strong>✅\x20Đáp\x20án\x20đúng:</strong>\x20'+_0x402528[_0x84fd29(0xac)](',\x20')+_0x84fd29(0x11c));}else{if(_0x6c062f[_0x84fd29(0x148)]===_0x84fd29(0xd3)){const _0x491598=[_0x6c062f[_0x84fd29(0x13d)],_0x6c062f[_0x84fd29(0xd4)],_0x6c062f[_0x84fd29(0xfc)],_0x6c062f[_0x84fd29(0x102)],_0x6c062f['option5']][_0x84fd29(0xfd)](_0x58cdec=>_0x58cdec);_0x491598['length']>0x0&&(_0x363131+=_0x84fd29(0x12c)+_0x491598[_0x84fd29(0xac)](_0x84fd29(0xcf))+_0x84fd29(0x11c));}}}_0x6c062f[_0x84fd29(0x124)]&&(_0x363131+=_0x84fd29(0xf1)+_0x6c062f[_0x84fd29(0x124)]+_0x84fd29(0x11c));}else{if(!_0x2ba4e7&&_0x6c062f[_0x84fd29(0xe7)]&&_0x6c062f['timeShowAnswer']){const _0x46cc46=new Date(_0x6c062f['timeShowAnswer']);_0x363131+=_0x84fd29(0x9c)+_0x46cc46['toLocaleString'](_0x84fd29(0x10b))+_0x84fd29(0x11c);}}_0x363131+=_0x84fd29(0xba),_0x5ee97e['innerHTML']+=_0x363131;}),saveResultsToSheet(_0x3431eb,_0x2dc609,_0x442759,_0x58dfb4);}async function saveResultsToSheet(_0x1ec525,_0x29aec1,_0xfe2c05,_0x567d8b){const _0x57b1a5=_0x44f86e;try{if(!studentId){console[_0x57b1a5(0x95)]('Không\x20có\x20mã\x20học\x20viên,\x20không\x20lưu\x20kết\x20quả');return;}const _0x1e4b2a=new Date(),_0x29cde7=_0x1e4b2a['toLocaleString']('vi-VN'),_0x53ecb5=_0x567d8b[_0x57b1a5(0x91)](_0xc3f9d7=>{const _0xe7feaa=_0x57b1a5;if(_0xc3f9d7['type']==='Open-Ended')return _0xe7feaa(0x135)+_0xc3f9d7[_0xe7feaa(0x11f)]+_0xe7feaa(0xc0);return _0xe7feaa(0x135)+_0xc3f9d7[_0xe7feaa(0x11f)]+':\x20'+(_0xc3f9d7['isCorrect']?'Đúng':'Sai');})[_0x57b1a5(0xac)](';\x20'),_0x1063dd=[studentId,selectedSession,_0x1ec525,_0x29aec1,_0xfe2c05,_0x29cde7,_0x53ecb5],_0x2c9a9b=_0x57b1a5(0x155)+SPREADSHEET_ID+_0x57b1a5(0x144)+RESULT_SHEET+':append?valueInputOption=RAW',_0x180ca0=await fetch(_0x2c9a9b,{'method':'POST','headers':{'Authorization':_0x57b1a5(0xe2)+accessToken,'Content-Type':_0x57b1a5(0x147)},'body':JSON[_0x57b1a5(0x152)]({'values':[_0x1063dd]})});_0x180ca0['ok']?console[_0x57b1a5(0x95)](_0x57b1a5(0x97)):console[_0x57b1a5(0xb2)](_0x57b1a5(0xe0),await _0x180ca0[_0x57b1a5(0xef)]());}catch(_0x2d3744){console[_0x57b1a5(0xb2)](_0x57b1a5(0xe0),_0x2d3744);}}function backToMenu(){const _0x4a3fe3=_0x44f86e;document[_0x4a3fe3(0xc4)]('results')[_0x4a3fe3(0x150)][_0x4a3fe3(0xf5)]='none',document[_0x4a3fe3(0xc4)](_0x4a3fe3(0xe1))[_0x4a3fe3(0x150)]['display']=_0x4a3fe3(0x151),document[_0x4a3fe3(0xc4)](_0x4a3fe3(0xa3))[_0x4a3fe3(0x150)][_0x4a3fe3(0xf5)]=_0x4a3fe3(0x127),document[_0x4a3fe3(0xc4)](_0x4a3fe3(0x143))[_0x4a3fe3(0x15f)]='',document[_0x4a3fe3(0xc4)](_0x4a3fe3(0x119))[_0x4a3fe3(0x142)]=!![],document[_0x4a3fe3(0xc4)](_0x4a3fe3(0x119))[_0x4a3fe3(0x116)]='Bắt\x20Đầu\x20Làm\x20Bài',studentId&&loadStudentHistory();}
     </script>
 </body>
 </html>
